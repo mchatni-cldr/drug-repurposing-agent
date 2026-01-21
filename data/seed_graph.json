@@ -1,0 +1,127 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-01-21",
+    "description": "Seed knowledge graph for drug repurposing demo"
+  },
+  "entities": [
+    {
+      "id": "DRUG_001",
+      "name": "Ruxolitinib",
+      "type": "drug",
+      "status": "approved",
+      "indication": "myelofibrosis"
+    },
+    {
+      "id": "DRUG_002",
+      "name": "Imatinib",
+      "type": "drug",
+      "status": "approved",
+      "indication": "CML"
+    },
+    {
+      "id": "PROT_001",
+      "name": "JAK2",
+      "type": "protein",
+      "class": "kinase"
+    },
+    {
+      "id": "PROT_002",
+      "name": "STAT3",
+      "type": "protein",
+      "class": "transcription_factor"
+    },
+    {
+      "id": "PROT_003",
+      "name": "BCR-ABL",
+      "type": "protein",
+      "class": "tyrosine_kinase"
+    },
+    {
+      "id": "DIS_001",
+      "name": "Pancreatic Cancer",
+      "type": "disease",
+      "category": "oncology"
+    },
+    {
+      "id": "DIS_002",
+      "name": "Myelofibrosis",
+      "type": "disease",
+      "category": "hematologic"
+    },
+    {
+      "id": "DIS_003",
+      "name": "CML",
+      "type": "disease",
+      "category": "hematologic"
+    },
+    {
+      "id": "PATH_001",
+      "name": "JAK-STAT Pathway",
+      "type": "pathway",
+      "function": "cell_signaling"
+    }
+  ],
+  "relationships": [
+    {
+      "source": "DRUG_001",
+      "relation": "inhibits",
+      "target": "PROT_001",
+      "confidence": 0.95
+    },
+    {
+      "source": "PROT_001",
+      "relation": "phosphorylates",
+      "target": "PROT_002",
+      "confidence": 0.98
+    },
+    {
+      "source": "PROT_002",
+      "relation": "overexpressed_in",
+      "target": "DIS_001",
+      "confidence": 0.92
+    },
+    {
+      "source": "DRUG_001",
+      "relation": "approved_for",
+      "target": "DIS_002",
+      "confidence": 1.0
+    },
+    {
+      "source": "DRUG_002",
+      "relation": "inhibits",
+      "target": "PROT_003",
+      "confidence": 0.97
+    },
+    {
+      "source": "DRUG_002",
+      "relation": "approved_for",
+      "target": "DIS_003",
+      "confidence": 1.0
+    },
+    {
+      "source": "PROT_001",
+      "relation": "participates_in",
+      "target": "PATH_001",
+      "confidence": 0.99
+    },
+    {
+      "source": "PROT_002",
+      "relation": "participates_in",
+      "target": "PATH_001",
+      "confidence": 0.99
+    },
+    {
+      "source": "PROT_003",
+      "relation": "associated_with",
+      "target": "DIS_001",
+      "confidence": 0.75
+    },
+    {
+      "source": "PROT_002",
+      "relation": "activated_in",
+      "target": "DIS_003",
+      "confidence": 0.68
+    }
+  ]
+}

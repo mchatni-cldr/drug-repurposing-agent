@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import os
+import json
 
 # CML project directory
-PROJECT_DIR = '/Users/mchatni/Projects/drug-repurposing-agent'
+PROJECT_DIR = '/home/cdsw' if os.path.exists('/home/cdsw') else os.path.dirname(os.path.dirname(__file__))
 
 app = Flask(__name__, 
             static_folder=os.path.join(PROJECT_DIR, 'frontend/dist'),
@@ -11,13 +12,54 @@ app = Flask(__name__,
 
 CORS(app)
 
+# Load seed graph
+SEED_GRAPH_PATH = os.path.join(PROJECT_DIR, 'data/seed_graph.json')
+with open(SEED_GRAPH_PATH, 'r') as f:
+    SEED_GRAPH = json.load(f)
+
+print(f"✓ Loaded seed graph: {len(SEED_GRAPH['entities'])} entities, {len(SEED_GRAPH['relationships'])} relationships")
+
 @app.route('/api/hello', methods=['GET'])
 def hello():
     return jsonify({'message': 'Hello Rameez!'})
 
 @app.route('/api/health', methods=['GET'])
 def health():
-    return jsonify({'status': 'healthy'})
+    return jsonify({
+        'status': 'healthy',
+        'graph_entities': len(SEED_GRAPH['entities']),
+        'graph_relationships': len(SEED_GRAPH['relationships'])
+    })
+
+@app.route('/api/graph-data', methods=['GET'])
+def get_graph_data():
+    """Return graph data in format for react-force-graph"""
+    
+    # Transform to nodes/links format
+    nodes = [
+        {
+            'id': entity['id'],
+            'name': entity['name'],
+            'type': entity['type'],
+            'group': entity['type']  # For coloring
+        }
+        for entity in SEED_GRAPH['entities']
+    ]
+    
+    links = [
+        {
+            'source': rel['source'],
+            'target': rel['target'],
+            'label': rel['relation'],
+            'confidence': rel.get('confidence', 0.5)
+        }
+        for rel in SEED_GRAPH['relationships']
+    ]
+    
+    return jsonify({
+        'nodes': nodes,
+        'links': links
+    })
 
 # Serve React frontend
 @app.route('/', defaults={'path': ''})
