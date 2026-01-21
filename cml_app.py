@@ -6,7 +6,7 @@ import os
 import sys
 
 # CML project directory
-PROJECT_DIR = '/Users/mchatni/Projects/drug-repurposing-agent'
+PROJECT_DIR = '/home/cdsw' if os.path.exists('/home/cdsw') else os.path.dirname(os.path.dirname(__file__))
 
 # Add backend to path
 sys.path.insert(0, os.path.join(PROJECT_DIR, 'backend'))
