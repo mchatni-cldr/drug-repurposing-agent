@@ -6,7 +6,11 @@ import os
 import sys
 
 # CML project directory
-PROJECT_DIR = '/home/cdsw' if os.path.exists('/home/cdsw') else os.path.dirname(os.path.dirname(__file__))
+if os.path.exists('/home/cdsw'):
+    PROJECT_DIR = '/home/cdsw'
+else:
+    # Local development - use the directory where cml_app.py is located
+    PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Add backend to path
 sys.path.insert(0, os.path.join(PROJECT_DIR, 'backend'))
@@ -18,11 +22,10 @@ def main():
     if not os.path.exists(dist_path):
         print("❌ ERROR: Frontend not built!")
         print(f"Looking for: {dist_path}")
+        print(f"Current directory: {os.getcwd()}")
+        print(f"Project directory: {PROJECT_DIR}")
         print("\nDirectory contents:")
         print(os.listdir(PROJECT_DIR))
-        if os.path.exists(os.path.join(PROJECT_DIR, 'frontend')):
-            print("\nFrontend directory contents:")
-            print(os.listdir(os.path.join(PROJECT_DIR, 'frontend')))
         sys.exit(1)
     
     print("✅ Using pre-built frontend from git")

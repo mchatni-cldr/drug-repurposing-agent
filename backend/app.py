@@ -4,7 +4,11 @@ import os
 import json
 
 # CML project directory
-PROJECT_DIR = '/home/cdsw' if os.path.exists('/home/cdsw') else os.path.dirname(os.path.dirname(__file__))
+if os.path.exists('/home/cdsw'):
+    PROJECT_DIR = '/home/cdsw'
+else:
+    # Local: go up one level from backend/ to project root
+    PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 app = Flask(__name__, 
             static_folder=os.path.join(PROJECT_DIR, 'frontend/dist'),
@@ -18,6 +22,8 @@ with open(SEED_GRAPH_PATH, 'r') as f:
     SEED_GRAPH = json.load(f)
 
 print(f"✓ Loaded seed graph: {len(SEED_GRAPH['entities'])} entities, {len(SEED_GRAPH['relationships'])} relationships")
+
+# ... rest of your endpoints ...
 
 @app.route('/api/hello', methods=['GET'])
 def hello():
