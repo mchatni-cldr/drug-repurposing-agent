@@ -2,12 +2,12 @@ from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 import os
 import json
+import anthropic
 
 # CML project directory
 if os.path.exists('/home/cdsw'):
     PROJECT_DIR = '/home/cdsw'
 else:
-    # Local: go up one level from backend/ to project root
     PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 app = Flask(__name__, 
@@ -23,7 +23,54 @@ with open(SEED_GRAPH_PATH, 'r') as f:
 
 print(f"✓ Loaded seed graph: {len(SEED_GRAPH['entities'])} entities, {len(SEED_GRAPH['relationships'])} relationships")
 
-# ... rest of your endpoints ...
+# Initialize Claude client
+claude_client = None
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+
+if ANTHROPIC_API_KEY:
+    claude_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    print("✓ Claude API client initialized")
+else:
+    print("⚠️  Warning: ANTHROPIC_API_KEY not set")
+
+def extract_triplets_with_claude(text: str) -> list:
+    """Extract knowledge triplets from text using Claude"""
+    
+    if not claude_client:
+        raise Exception("Claude API client not initialized. Set ANTHROPIC_API_KEY environment variable.")
+    
+    # Load prompt template
+    prompt_path = os.path.join(PROJECT_DIR, 'prompts/extract_triplets.txt')
+    with open(prompt_path, 'r') as f:
+        prompt_template = f.read()
+    
+    # Fill in the publication text
+    prompt = prompt_template.replace('{PUBLICATION_TEXT}', text)
+    
+    print(f"🤖 Calling Claude API to extract triplets...")
+    
+    # Call Claude
+    response = claude_client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=4000,
+        messages=[{
+            "role": "user",
+            "content": prompt
+        }]
+    )
+    
+    # Extract JSON from response
+    response_text = response.content[0].text
+    
+    # Remove markdown code fences if present
+    response_text = response_text.replace('```json', '').replace('```', '').strip()
+    
+    # Parse JSON
+    triplets = json.loads(response_text)
+    
+    print(f"✓ Extracted {len(triplets)} triplets")
+    
+    return triplets
 
 @app.route('/api/hello', methods=['GET'])
 def hello():
@@ -70,7 +117,7 @@ def get_graph_data():
 @app.route('/api/upload-publication', methods=['POST'])
 def upload_publication():
     """
-    Receive uploaded publication file and return its content
+    Receive uploaded publication and extract triplets using Claude
     """
     try:
         if 'file' not in request.files:
@@ -92,11 +139,15 @@ def upload_publication():
         
         print(f"✓ Received publication: {file.filename} ({len(content)} characters)")
         
+        # Extract triplets with Claude
+        triplets = extract_triplets_with_claude(content)
+        
         return jsonify({
             'success': True,
             'filename': file.filename,
             'content': content,
-            'length': len(content)
+            'triplets': triplets,
+            'triplet_count': len(triplets)
         })
     
     except Exception as e:
