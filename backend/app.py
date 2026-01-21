@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 import os
 import json
@@ -66,6 +66,46 @@ def get_graph_data():
         'nodes': nodes,
         'links': links
     })
+
+@app.route('/api/upload-publication', methods=['POST'])
+def upload_publication():
+    """
+    Receive uploaded publication file and return its content
+    """
+    try:
+        if 'file' not in request.files:
+            return jsonify({
+                'success': False,
+                'error': 'No file provided'
+            }), 400
+        
+        file = request.files['file']
+        
+        if file.filename == '':
+            return jsonify({
+                'success': False,
+                'error': 'No file selected'
+            }), 400
+        
+        # Read file content
+        content = file.read().decode('utf-8')
+        
+        print(f"✓ Received publication: {file.filename} ({len(content)} characters)")
+        
+        return jsonify({
+            'success': True,
+            'filename': file.filename,
+            'content': content,
+            'length': len(content)
+        })
+    
+    except Exception as e:
+        print(f"❌ Upload error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 
 # Serve React frontend
 @app.route('/', defaults={'path': ''})

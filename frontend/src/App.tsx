@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { GraphVisualization } from './components/GraphVisualization'
+import { PublicationUpload } from './components/PublicationUpload'
 
 function App() {
   const [message, setMessage] = useState<string>('')
@@ -44,6 +45,11 @@ function App() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Publication Upload */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <PublicationUpload />
         </div>
 
         {/* Knowledge Graph Visualization */}
