@@ -1,127 +1,249 @@
 {
   "metadata": {
-    "version": "1.0",
+    "version": "2.0",
     "created": "2025-01-21",
-    "description": "Seed knowledge graph for drug repurposing demo"
+    "description": "Knowledge graph demonstrating semaglutide repurposing discovery for obesity",
+    "scenario": "Semaglutide approved for diabetes (2017), graph reveals obesity potential"
   },
   "entities": [
     {
       "id": "DRUG_001",
-      "name": "Ruxolitinib",
+      "name": "Semaglutide",
       "type": "drug",
       "status": "approved",
-      "indication": "myelofibrosis"
+      "brand_name": "Ozempic",
+      "approval_year": 2017,
+      "indication": "Type 2 Diabetes"
     },
     {
       "id": "DRUG_002",
-      "name": "Imatinib",
+      "name": "Metformin",
       "type": "drug",
       "status": "approved",
-      "indication": "CML"
+      "indication": "Type 2 Diabetes"
     },
     {
       "id": "PROT_001",
-      "name": "JAK2",
+      "name": "GLP-1 Receptor",
       "type": "protein",
-      "class": "kinase"
+      "class": "GPCR",
+      "full_name": "Glucagon-like peptide-1 receptor"
     },
     {
       "id": "PROT_002",
-      "name": "STAT3",
+      "name": "Insulin",
       "type": "protein",
-      "class": "transcription_factor"
+      "class": "hormone"
     },
     {
       "id": "PROT_003",
-      "name": "BCR-ABL",
+      "name": "Glucagon",
       "type": "protein",
-      "class": "tyrosine_kinase"
-    },
-    {
-      "id": "DIS_001",
-      "name": "Pancreatic Cancer",
-      "type": "disease",
-      "category": "oncology"
-    },
-    {
-      "id": "DIS_002",
-      "name": "Myelofibrosis",
-      "type": "disease",
-      "category": "hematologic"
-    },
-    {
-      "id": "DIS_003",
-      "name": "CML",
-      "type": "disease",
-      "category": "hematologic"
+      "class": "hormone"
     },
     {
       "id": "PATH_001",
-      "name": "JAK-STAT Pathway",
+      "name": "GLP-1 Signaling",
       "type": "pathway",
-      "function": "cell_signaling"
+      "function": "glucose_homeostasis"
+    },
+    {
+      "id": "PATH_002",
+      "name": "Appetite Regulation",
+      "type": "pathway",
+      "location": "hypothalamus",
+      "function": "food_intake_control"
+    },
+    {
+      "id": "PATH_003",
+      "name": "Gastric Motility",
+      "type": "pathway",
+      "function": "digestion_control"
+    },
+    {
+      "id": "BIO_001",
+      "name": "HbA1c",
+      "type": "biomarker",
+      "measures": "blood_glucose"
+    },
+    {
+      "id": "BIO_002",
+      "name": "Body Weight",
+      "type": "biomarker",
+      "measures": "mass"
+    },
+    {
+      "id": "BIO_003",
+      "name": "Satiety",
+      "type": "biomarker",
+      "measures": "fullness"
+    },
+    {
+      "id": "BIO_004",
+      "name": "Food Intake",
+      "type": "biomarker",
+      "measures": "caloric_consumption"
+    },
+    {
+      "id": "DIS_001",
+      "name": "Type 2 Diabetes",
+      "type": "disease",
+      "category": "metabolic"
+    },
+    {
+      "id": "DIS_002",
+      "name": "Obesity",
+      "type": "disease",
+      "category": "metabolic"
+    },
+    {
+      "id": "DIS_003",
+      "name": "Metabolic Syndrome",
+      "type": "disease",
+      "category": "metabolic"
     }
   ],
   "relationships": [
     {
       "source": "DRUG_001",
-      "relation": "inhibits",
+      "relation": "agonizes",
       "target": "PROT_001",
-      "confidence": 0.95
+      "confidence": 0.98,
+      "evidence": "primary_mechanism"
     },
     {
       "source": "PROT_001",
-      "relation": "phosphorylates",
+      "relation": "stimulates",
       "target": "PROT_002",
-      "confidence": 0.98
+      "confidence": 0.95,
+      "evidence": "insulin_secretion"
     },
     {
-      "source": "PROT_002",
-      "relation": "overexpressed_in",
-      "target": "DIS_001",
-      "confidence": 0.92
+      "source": "PROT_001",
+      "relation": "inhibits",
+      "target": "PROT_003",
+      "confidence": 0.93,
+      "evidence": "glucagon_suppression"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "participates_in",
+      "target": "PATH_001",
+      "confidence": 0.99,
+      "evidence": "pathway_member"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "expressed_in",
+      "target": "PATH_002",
+      "confidence": 0.92,
+      "evidence": "brain_expression"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "regulates",
+      "target": "PATH_003",
+      "confidence": 0.88,
+      "evidence": "gastric_effects"
+    },
+    {
+      "source": "PATH_002",
+      "relation": "controls",
+      "target": "BIO_003",
+      "confidence": 0.90,
+      "evidence": "hypothalamic_control"
+    },
+    {
+      "source": "PATH_003",
+      "relation": "affects",
+      "target": "BIO_003",
+      "confidence": 0.85,
+      "evidence": "delayed_emptying"
+    },
+    {
+      "source": "BIO_003",
+      "relation": "reduces",
+      "target": "BIO_004",
+      "confidence": 0.87,
+      "evidence": "satiety_effect"
+    },
+    {
+      "source": "BIO_004",
+      "relation": "influences",
+      "target": "BIO_002",
+      "confidence": 0.82,
+      "evidence": "caloric_balance"
+    },
+    {
+      "source": "BIO_002",
+      "relation": "marker_for",
+      "target": "DIS_002",
+      "confidence": 0.95,
+      "evidence": "diagnostic_criteria"
     },
     {
       "source": "DRUG_001",
       "relation": "approved_for",
-      "target": "DIS_002",
-      "confidence": 1.0
+      "target": "DIS_001",
+      "confidence": 1.0,
+      "evidence": "FDA_approval_2017"
     },
     {
-      "source": "DRUG_002",
-      "relation": "inhibits",
-      "target": "PROT_003",
-      "confidence": 0.97
+      "source": "DRUG_001",
+      "relation": "reduces",
+      "target": "BIO_001",
+      "confidence": 0.96,
+      "evidence": "clinical_trials"
+    },
+    {
+      "source": "DRUG_001",
+      "relation": "side_effect",
+      "target": "BIO_002",
+      "confidence": 0.78,
+      "evidence": "SUSTAIN_trials_observation",
+      "note": "10-14% weight loss observed"
+    },
+    {
+      "source": "DIS_001",
+      "relation": "comorbid_with",
+      "target": "DIS_002",
+      "confidence": 0.88,
+      "evidence": "epidemiological"
+    },
+    {
+      "source": "DIS_002",
+      "relation": "increases_risk",
+      "target": "DIS_001",
+      "confidence": 0.85,
+      "evidence": "meta_analysis"
+    },
+    {
+      "source": "DIS_001",
+      "relation": "component_of",
+      "target": "DIS_003",
+      "confidence": 0.90,
+      "evidence": "diagnostic_criteria"
+    },
+    {
+      "source": "DIS_002",
+      "relation": "component_of",
+      "target": "DIS_003",
+      "confidence": 0.92,
+      "evidence": "diagnostic_criteria"
     },
     {
       "source": "DRUG_002",
       "relation": "approved_for",
-      "target": "DIS_003",
-      "confidence": 1.0
-    },
-    {
-      "source": "PROT_001",
-      "relation": "participates_in",
-      "target": "PATH_001",
-      "confidence": 0.99
-    },
-    {
-      "source": "PROT_002",
-      "relation": "participates_in",
-      "target": "PATH_001",
-      "confidence": 0.99
-    },
-    {
-      "source": "PROT_003",
-      "relation": "associated_with",
       "target": "DIS_001",
-      "confidence": 0.75
+      "confidence": 1.0,
+      "evidence": "FDA_approval"
     },
     {
-      "source": "PROT_002",
-      "relation": "activated_in",
-      "target": "DIS_003",
-      "confidence": 0.68
+      "source": "DRUG_002",
+      "relation": "reduces",
+      "target": "BIO_001",
+      "confidence": 0.88,
+      "evidence": "mechanism"
     }
   ]
 }
