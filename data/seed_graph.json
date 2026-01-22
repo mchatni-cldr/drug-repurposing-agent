@@ -313,27 +313,6 @@
       "evidence": "neuroendocrine"
     },
     {
-      "source": "DIS_001",
-      "relation": "comorbid_with",
-      "target": "DIS_002",
-      "confidence": 0.88,
-      "evidence": "epidemiology"
-    },
-    {
-      "source": "DIS_001",
-      "relation": "component_of",
-      "target": "DIS_003",
-      "confidence": 0.90,
-      "evidence": "diagnostic_criteria"
-    },
-    {
-      "source": "DIS_002",
-      "relation": "component_of",
-      "target": "DIS_003",
-      "confidence": 0.92,
-      "evidence": "diagnostic_criteria"
-    },
-    {
       "source": "DRUG_002",
       "relation": "approved_for",
       "target": "DIS_001",

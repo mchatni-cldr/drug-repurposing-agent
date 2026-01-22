@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, send_from_directory, request
+from tools.graph_tools import bfs_find_paths, generate_mechanism_summary, score_repurposing_opportunity
 from flask_cors import CORS
 import os
 import json
@@ -152,6 +153,102 @@ def upload_publication():
     
     except Exception as e:
         print(f"❌ Upload error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/discover', methods=['POST'])
+def discover():
+    """
+    Discover drug repurposing opportunities
+    """
+    try:
+        data = request.get_json()
+        question = data.get('question', '')
+        
+        if not question:
+            return jsonify({
+                'success': False,
+                'error': 'No question provided'
+            }), 400
+        
+        print(f"🔍 Discovery question: {question}")
+        
+        # Simple parsing: look for drug and disease names in question
+        # For demo, we'll use Semaglutide → Obesity
+        # In production, would use NLP to extract entities
+        
+        drug_name = "Semaglutide"
+        disease_name = "Obesity"
+        
+        # TODO: Smarter entity extraction from question
+        # For now, hardcode the demo case
+        
+        print(f"🎯 Searching: {drug_name} → {disease_name}")
+        
+        # Find paths
+        paths = bfs_find_paths(
+            SEED_GRAPH,
+            start_entity=drug_name,
+            target_entity=disease_name,
+            max_depth=10
+        )
+        
+        if not paths:
+            return jsonify({
+                'success': True,
+                'found_paths': False,
+                'message': f'No paths found between {drug_name} and {disease_name}'
+            })
+        
+        # Get top path
+        top_path = paths[0]
+        
+        # Get drug entity details
+        drug_entity = next(
+            (e for e in SEED_GRAPH['entities'] if e['name'] == drug_name),
+            {}
+        )
+        
+        # Score the opportunity
+        scores = score_repurposing_opportunity(top_path, drug_entity)
+        
+        # Generate mechanism summary
+        mechanism = generate_mechanism_summary(top_path)
+        
+        # Build discovery result
+        discovery = {
+            'success': True,
+            'found_paths': True,
+            'drug': drug_name,
+            'disease': disease_name,
+            'top_path': {
+                'nodes': [n['name'] for n in top_path['node_details']],
+                'node_ids': top_path['nodes'],
+                'edges': top_path['edges'],
+                'mechanism': mechanism,
+                'confidence': top_path['confidence'],
+                'path_length': top_path['length']
+            },
+            'scores': scores,
+            'alternative_paths': len(paths),
+            'hypothesis': f"{drug_name} may be effective for {disease_name} treatment",
+            'mechanism_summary': f"Through {top_path['length']}-step pathway involving " +
+                               " → ".join([n['name'] for n in top_path['node_details'][1:-1]])
+        }
+        
+        print(f"✓ Discovery complete: {len(paths)} paths found")
+        print(f"  Top path: {top_path['length']} hops, {top_path['confidence']:.0%} confidence")
+        print(f"  Mechanism: {mechanism}")
+        
+        return jsonify(discovery)
+    
+    except Exception as e:
+        print(f"❌ Discovery error: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'success': False,
             'error': str(e)
