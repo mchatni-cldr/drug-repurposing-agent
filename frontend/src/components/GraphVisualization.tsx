@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import ForceGraph2D from 'react-force-graph-2d'
 
 interface Node {
@@ -24,10 +24,30 @@ export function GraphVisualization() {
   const [graphData, setGraphData] = useState<GraphData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>('')
+  const [dimensions, setDimensions] = useState({ width: 800, height: 600 })
   const graphRef = useRef<any>()
+  const containerRef = useRef<HTMLDivElement>(null)
 
+  // Fetch graph data
   useEffect(() => {
     fetchGraphData()
+  }, [])
+
+  // Update dimensions on mount and resize
+  useLayoutEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect()
+        setDimensions({ 
+          width: rect.width - 4,  // Subtract border width (2px each side)
+          height: 600 
+        })
+      }
+    }
+
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
+    return () => window.removeEventListener('resize', updateDimensions)
   }, [])
 
   const fetchGraphData = async () => {
@@ -44,17 +64,18 @@ export function GraphVisualization() {
     }
   }
 
+
   const getNodeColor = (node: Node) => {
     const colors: Record<string, string> = {
-      drug: '#3B82F6',      // blue
-      protein: '#10B981',   // green
-      disease: '#F59E0B',   // orange
-      pathway: '#8B5CF6'    // purple
-    }
-    return colors[node.type] || '#6B7280'
+    drug: '#3B82F6',        // blue
+    protein: '#10B981',     // green
+    disease: '#F59E0B',     // orange
+    pathway: '#8B5CF6',     // purple
+    biomarker: '#EC4899',   // pink
+    anatomy: '#F97316'      // bright orange (was teal - too close to green)
   }
-
-  // Custom node rendering with labels
+    return colors[node.type] || '#6B7280'
+}
   const paintNode = (node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
     const label = node.name
     const fontSize = 12 / globalScale
@@ -74,7 +95,6 @@ export function GraphVisualization() {
     ctx.fillText(label, node.x, node.y + nodeSize + fontSize)
   }
 
-  // Custom link rendering with labels
   const paintLink = (link: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
     const fontSize = 10 / globalScale
     const start = link.source
@@ -84,7 +104,7 @@ export function GraphVisualization() {
     const middleX = (start.x + end.x) / 2
     const middleY = (start.y + end.y) / 2
     
-    // Draw link line (default behavior)
+    // Draw link line
     ctx.strokeStyle = '#9CA3AF'
     ctx.lineWidth = 1 / globalScale
     ctx.beginPath()
@@ -116,9 +136,8 @@ export function GraphVisualization() {
     ctx.font = `${fontSize}px Sans-Serif`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillStyle = '#6B7280'
     
-    // Background for label (for better readability)
+    // Background for label
     const labelText = link.label
     const textWidth = ctx.measureText(labelText).width
     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
@@ -134,70 +153,94 @@ export function GraphVisualization() {
     ctx.fillText(labelText, middleX, middleY)
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-gray-500">Loading knowledge graph...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">Error: {error}</p>
-      </div>
-    )
-  }
-
-  if (!graphData) return null
-
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
+      {/* Header */}
       <div className="mb-4">
         <h2 className="text-xl font-semibold mb-2">Knowledge Graph</h2>
         <div className="flex gap-4 text-sm flex-wrap">
           <span className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-            Drugs ({graphData.nodes.filter(n => n.type === 'drug').length})
+            Drugs ({graphData?.nodes.filter(n => n.type === 'drug').length || 0})
           </span>
           <span className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-green-500"></span>
-            Proteins ({graphData.nodes.filter(n => n.type === 'protein').length})
+            Proteins ({graphData?.nodes.filter(n => n.type === 'protein').length || 0})
           </span>
           <span className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-orange-500"></span>
-            Diseases ({graphData.nodes.filter(n => n.type === 'disease').length})
+            Diseases ({graphData?.nodes.filter(n => n.type === 'disease').length || 0})
           </span>
           <span className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-purple-500"></span>
-            Pathways ({graphData.nodes.filter(n => n.type === 'pathway').length})
+            Pathways ({graphData?.nodes.filter(n => n.type === 'pathway').length || 0})
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-pink-500"></span>
+            Biomarkers ({graphData?.nodes.filter(n => n.type === 'biomarker').length || 0})
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-teal-500"></span>
+            Anatomy ({graphData?.nodes.filter(n => n.type === 'anatomy').length || 0})
           </span>
         </div>
       </div>
 
-      <div className="border rounded-lg bg-gray-50" style={{ height: '600px' }}>
-        <ForceGraph2D
-          ref={graphRef}
-          graphData={graphData}
-          nodeCanvasObject={paintNode}
-          nodeCanvasObjectMode={() => 'replace'}
-          linkCanvasObject={paintLink}
-          linkCanvasObjectMode={() => 'replace'}
-          linkDirectionalArrowLength={0}
-          d3VelocityDecay={0.3}
-          enableNodeDrag={true}
-          enableZoomInteraction={true}
-          enablePanInteraction={true}
-          cooldownTime={3000}
-        />
+      {/* Graph Container */}
+      <div 
+        ref={containerRef}
+        className="border-2 border-gray-300 rounded-lg bg-gray-50 overflow-hidden"
+        style={{ 
+          height: '600px',
+          width: '100%',
+          position: 'relative'
+        }}
+      >
+        {loading && (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-gray-500">Loading knowledge graph...</div>
+          </div>
+        )}
+        
+        {error && (
+          <div className="flex items-center justify-center h-full p-4">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-red-800">Error: {error}</p>
+            </div>
+          </div>
+        )}
+        
+        {graphData && !loading && !error && (
+          <ForceGraph2D
+            ref={graphRef}
+            graphData={graphData}
+            width={dimensions.width}
+            height={dimensions.height}
+            nodeCanvasObject={paintNode}
+            nodeCanvasObjectMode={() => 'replace'}
+            linkCanvasObject={paintLink}
+            linkCanvasObjectMode={() => 'replace'}
+            linkDirectionalArrowLength={0}
+            d3VelocityDecay={0.3}
+            enableNodeDrag={true}
+            enableZoomInteraction={true}
+            enablePanInteraction={true}
+            cooldownTime={3000}
+            backgroundColor="#F9FAFB"
+          />
+        )}
       </div>
 
+      {/* Footer */}
       <div className="mt-4 text-sm text-gray-600 text-center">
-        {graphData.nodes.length} entities • {graphData.links.length} relationships
-        <div className="text-xs mt-1 text-gray-500">
-          💡 Tip: Drag nodes to rearrange • Scroll to zoom • Drag background to pan
-        </div>
+        {graphData && (
+          <>
+            {graphData.nodes.length} entities • {graphData.links.length} relationships
+            <div className="text-xs mt-1 text-gray-500">
+              💡 Tip: Drag nodes to rearrange • Scroll to zoom • Drag background to pan
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

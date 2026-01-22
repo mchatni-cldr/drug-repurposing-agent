@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "version": "2.0",
+    "version": "3.0",
     "created": "2025-01-21",
-    "description": "Knowledge graph demonstrating semaglutide repurposing discovery for obesity",
-    "scenario": "Semaglutide approved for diabetes (2017), graph reveals obesity potential"
+    "description": "Enhanced knowledge graph with brain biology for semaglutide obesity discovery",
+    "scenario": "Hidden multi-domain connection requires AI to link diabetes drug → brain appetite centers → obesity"
   },
   "entities": [
     {
@@ -37,28 +37,66 @@
     },
     {
       "id": "PROT_003",
-      "name": "Glucagon",
+      "name": "POMC Neurons",
       "type": "protein",
-      "class": "hormone"
+      "full_name": "Pro-opiomelanocortin neurons",
+      "function": "appetite_suppression"
     },
     {
-      "id": "PATH_001",
-      "name": "GLP-1 Signaling",
-      "type": "pathway",
-      "function": "glucose_homeostasis"
+      "id": "PROT_004",
+      "name": "NPY Neurons",
+      "type": "protein",
+      "full_name": "Neuropeptide Y neurons",
+      "function": "appetite_stimulation"
+    },
+    {
+      "id": "PROT_005",
+      "name": "Leptin",
+      "type": "protein",
+      "class": "hormone",
+      "function": "satiety_hormone"
     },
     {
       "id": "PATH_002",
-      "name": "Appetite Regulation",
+      "name": "Central Appetite Regulation",
       "type": "pathway",
       "location": "hypothalamus",
       "function": "food_intake_control"
     },
     {
       "id": "PATH_003",
-      "name": "Gastric Motility",
+      "name": "Energy Homeostasis",
       "type": "pathway",
-      "function": "digestion_control"
+      "function": "metabolic_balance"
+    },
+    {
+      "id": "ANAT_001",
+      "name": "Hypothalamus",
+      "type": "anatomy",
+      "organ": "brain",
+      "function": "homeostatic_control"
+    },
+    {
+      "id": "ANAT_002",
+      "name": "Arcuate Nucleus",
+      "type": "anatomy",
+      "organ": "brain",
+      "location": "hypothalamus",
+      "function": "appetite_center"
+    },
+    {
+      "id": "ANAT_003",
+      "name": "Pancreas",
+      "type": "anatomy",
+      "organ": "pancreas",
+      "function": "insulin_secretion"
+    },
+    {
+      "id": "ANAT_004",
+      "name": "Stomach",
+      "type": "anatomy",
+      "organ": "GI_tract",
+      "function": "digestion"
     },
     {
       "id": "BIO_001",
@@ -83,6 +121,12 @@
       "name": "Food Intake",
       "type": "biomarker",
       "measures": "caloric_consumption"
+    },
+    {
+      "id": "BIO_006",
+      "name": "Gastric Emptying Rate",
+      "type": "biomarker",
+      "measures": "digestion_speed"
     },
     {
       "id": "DIS_001",
@@ -112,76 +156,6 @@
       "evidence": "primary_mechanism"
     },
     {
-      "source": "PROT_001",
-      "relation": "stimulates",
-      "target": "PROT_002",
-      "confidence": 0.95,
-      "evidence": "insulin_secretion"
-    },
-    {
-      "source": "PROT_001",
-      "relation": "inhibits",
-      "target": "PROT_003",
-      "confidence": 0.93,
-      "evidence": "glucagon_suppression"
-    },
-    {
-      "source": "PROT_001",
-      "relation": "participates_in",
-      "target": "PATH_001",
-      "confidence": 0.99,
-      "evidence": "pathway_member"
-    },
-    {
-      "source": "PROT_001",
-      "relation": "expressed_in",
-      "target": "PATH_002",
-      "confidence": 0.92,
-      "evidence": "brain_expression"
-    },
-    {
-      "source": "PROT_001",
-      "relation": "regulates",
-      "target": "PATH_003",
-      "confidence": 0.88,
-      "evidence": "gastric_effects"
-    },
-    {
-      "source": "PATH_002",
-      "relation": "controls",
-      "target": "BIO_003",
-      "confidence": 0.90,
-      "evidence": "hypothalamic_control"
-    },
-    {
-      "source": "PATH_003",
-      "relation": "affects",
-      "target": "BIO_003",
-      "confidence": 0.85,
-      "evidence": "delayed_emptying"
-    },
-    {
-      "source": "BIO_003",
-      "relation": "reduces",
-      "target": "BIO_004",
-      "confidence": 0.87,
-      "evidence": "satiety_effect"
-    },
-    {
-      "source": "BIO_004",
-      "relation": "influences",
-      "target": "BIO_002",
-      "confidence": 0.82,
-      "evidence": "caloric_balance"
-    },
-    {
-      "source": "BIO_002",
-      "relation": "marker_for",
-      "target": "DIS_002",
-      "confidence": 0.95,
-      "evidence": "diagnostic_criteria"
-    },
-    {
       "source": "DRUG_001",
       "relation": "approved_for",
       "target": "DIS_001",
@@ -189,33 +163,161 @@
       "evidence": "FDA_approval_2017"
     },
     {
-      "source": "DRUG_001",
-      "relation": "reduces",
-      "target": "BIO_001",
-      "confidence": 0.96,
-      "evidence": "clinical_trials"
+      "source": "PROT_001",
+      "relation": "stimulates",
+      "target": "PROT_002",
+      "confidence": 0.95,
+      "evidence": "pancreatic_mechanism"
     },
     {
-      "source": "DRUG_001",
-      "relation": "side_effect",
+      "source": "PROT_001",
+      "relation": "expressed_in",
+      "target": "ANAT_003",
+      "confidence": 0.96,
+      "evidence": "tissue_expression"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "expressed_in",
+      "target": "ANAT_001",
+      "confidence": 0.89,
+      "evidence": "brain_expression",
+      "note": "Key hidden connection - not well known in 2017"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "expressed_in",
+      "target": "ANAT_002",
+      "confidence": 0.87,
+      "evidence": "neuroanatomy",
+      "note": "Critical for appetite regulation"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "expressed_in",
+      "target": "ANAT_004",
+      "confidence": 0.92,
+      "evidence": "GI_expression"
+    },
+    {
+      "source": "ANAT_001",
+      "relation": "contains",
+      "target": "ANAT_002",
+      "confidence": 0.99,
+      "evidence": "neuroanatomy"
+    },
+    {
+      "source": "ANAT_002",
+      "relation": "contains",
+      "target": "PROT_003",
+      "confidence": 0.94,
+      "evidence": "neuron_location"
+    },
+    {
+      "source": "ANAT_002",
+      "relation": "contains",
+      "target": "PROT_004",
+      "confidence": 0.93,
+      "evidence": "neuron_location"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "activates",
+      "target": "PROT_003",
+      "confidence": 0.86,
+      "evidence": "neuronal_signaling",
+      "note": "Critical mechanistic link"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "inhibits",
+      "target": "PROT_004",
+      "confidence": 0.84,
+      "evidence": "neuronal_signaling"
+    },
+    {
+      "source": "PROT_003",
+      "relation": "promotes",
+      "target": "BIO_003",
+      "confidence": 0.91,
+      "evidence": "appetite_biology"
+    },
+    {
+      "source": "PROT_004",
+      "relation": "suppresses",
+      "target": "BIO_003",
+      "confidence": 0.88,
+      "evidence": "appetite_biology"
+    },
+    {
+      "source": "PROT_005",
+      "relation": "regulates",
+      "target": "PROT_003",
+      "confidence": 0.85,
+      "evidence": "leptin_pathway"
+    },
+    {
+      "source": "BIO_003",
+      "relation": "reduces",
+      "target": "BIO_004",
+      "confidence": 0.93,
+      "evidence": "behavioral_outcome"
+    },
+    {
+      "source": "BIO_004",
+      "relation": "affects",
+      "target": "PATH_003",
+      "confidence": 0.90,
+      "evidence": "energy_balance"
+    },
+    {
+      "source": "PATH_003",
+      "relation": "determines",
       "target": "BIO_002",
-      "confidence": 0.78,
-      "evidence": "SUSTAIN_trials_observation",
-      "note": "10-14% weight loss observed"
+      "confidence": 0.88,
+      "evidence": "thermodynamics"
+    },
+    {
+      "source": "BIO_002",
+      "relation": "diagnostic_for",
+      "target": "DIS_002",
+      "confidence": 0.97,
+      "evidence": "clinical_criteria"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "slows",
+      "target": "BIO_006",
+      "confidence": 0.90,
+      "evidence": "GI_physiology"
+    },
+    {
+      "source": "BIO_006",
+      "relation": "enhances",
+      "target": "BIO_003",
+      "confidence": 0.82,
+      "evidence": "peripheral_satiety"
+    },
+    {
+      "source": "ANAT_002",
+      "relation": "regulates",
+      "target": "PATH_002",
+      "confidence": 0.95,
+      "evidence": "functional_role"
+    },
+    {
+      "source": "PATH_002",
+      "relation": "controls",
+      "target": "BIO_004",
+      "confidence": 0.92,
+      "evidence": "neuroendocrine"
     },
     {
       "source": "DIS_001",
       "relation": "comorbid_with",
       "target": "DIS_002",
       "confidence": 0.88,
-      "evidence": "epidemiological"
-    },
-    {
-      "source": "DIS_002",
-      "relation": "increases_risk",
-      "target": "DIS_001",
-      "confidence": 0.85,
-      "evidence": "meta_analysis"
+      "evidence": "epidemiology"
     },
     {
       "source": "DIS_001",
@@ -239,11 +341,11 @@
       "evidence": "FDA_approval"
     },
     {
-      "source": "DRUG_002",
+      "source": "DRUG_001",
       "relation": "reduces",
       "target": "BIO_001",
-      "confidence": 0.88,
-      "evidence": "mechanism"
+      "confidence": 0.96,
+      "evidence": "SUSTAIN_trials"
     }
   ]
 }
