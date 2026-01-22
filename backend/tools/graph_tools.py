@@ -35,12 +35,15 @@ def bfs_find_paths(
             adjacency[source] = []
         adjacency[source].append(target)
         
-        # Store relationship details
+        # Store relationship details (including metadata)
         edge_key = f"{source}->{target}"
         relationship_map[edge_key] = {
             'relation': rel['relation'],
             'confidence': rel.get('confidence', 0.5),
-            'evidence': rel.get('evidence', 'unknown')
+            'evidence': rel.get('evidence', 'unknown'),
+            'hidden_knowledge': rel.get('hidden_knowledge', False),
+            'note': rel.get('note', ''),
+            'domain': rel.get('domain', 'unknown')
         }
     
     # Find entity IDs from names
@@ -71,14 +74,22 @@ def bfs_find_paths(
             avg_confidence = sum(confidences) / len(confidences) if confidences else 0
             
             # Build path details
+            hidden_count = sum(
+                1 for edge in edge_path 
+                if relationship_map[edge].get('hidden_knowledge', False)
+            )
+            # Build path details
             path_details = {
                 'nodes': node_path,
                 'edges': edge_path,
                 'length': len(node_path) - 1,
                 'confidence': avg_confidence,
+                'hidden_connections': hidden_count,  # ← Add this line
                 'node_details': [entity_details[node_id] for node_id in node_path],
                 'edge_details': [relationship_map[edge] for edge in edge_path]
             }
+            
+            
             paths.append(path_details)
             continue
         
@@ -107,14 +118,9 @@ def bfs_find_paths(
 def generate_mechanism_summary(path: Dict[str, Any]) -> str:
     """
     Generate human-readable mechanism summary from a path
-    
-    Args:
-        path: Path dictionary from bfs_find_paths
-    
-    Returns:
-        Summary string
     """
     steps = []
+    hidden_count = 0
     
     for i, edge_detail in enumerate(path['edge_details']):
         source = path['node_details'][i]['name']
@@ -122,9 +128,21 @@ def generate_mechanism_summary(path: Dict[str, Any]) -> str:
         relation = edge_detail['relation']
         confidence = edge_detail['confidence']
         
-        steps.append(f"{source} --{relation}--> {target} ({confidence:.0%} confidence)")
+        # Check if this was hidden knowledge
+        is_hidden = edge_detail.get('hidden_knowledge', False)
+        hidden_marker = " 🔍" if is_hidden else ""
+        
+        if is_hidden:
+            hidden_count += 1
+        
+        steps.append(f"{source} --{relation}--> {target} ({confidence:.0%} confidence){hidden_marker}")
     
-    return " → ".join(steps)
+    summary = " → ".join(steps)
+    
+    if hidden_count > 0:
+        summary += f"\n\n💡 {hidden_count} hidden connections discovered (marked with 🔍)"
+    
+    return summary
 
 
 def score_repurposing_opportunity(

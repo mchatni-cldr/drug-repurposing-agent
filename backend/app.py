@@ -219,6 +219,7 @@ def discover():
         mechanism = generate_mechanism_summary(top_path)
         
         # Build discovery result
+        # Build discovery result
         discovery = {
             'success': True,
             'found_paths': True,
@@ -228,15 +229,18 @@ def discover():
                 'nodes': [n['name'] for n in top_path['node_details']],
                 'node_ids': top_path['nodes'],
                 'edges': top_path['edges'],
+                'edge_details': top_path['edge_details'],  # ← Add this line
                 'mechanism': mechanism,
                 'confidence': top_path['confidence'],
-                'path_length': top_path['length']
+                'path_length': top_path['length'],
+                'hidden_connections': top_path.get('hidden_connections', 0)  # ← Add this line
             },
             'scores': scores,
             'alternative_paths': len(paths),
             'hypothesis': f"{drug_name} may be effective for {disease_name} treatment",
             'mechanism_summary': f"Through {top_path['length']}-step pathway involving " +
-                               " → ".join([n['name'] for n in top_path['node_details'][1:-1]])
+                            " → ".join([n['name'] for n in top_path['node_details'][1:-1]]),
+            'key_insight': f"Discovery bridges {top_path.get('hidden_connections', 0)} hidden cross-domain connections from neuroscience literature"  # ← Add this line
         }
         
         print(f"✓ Discovery complete: {len(paths)} paths found")
