@@ -20,7 +20,14 @@ interface GraphData {
   links: Link[]
 }
 
-export function GraphVisualization() {
+interface GraphVisualizationProps {
+  highlightedPath?: {
+    nodeIds: string[]
+    edges: string[]
+  }
+}
+
+export function GraphVisualization({ highlightedPath }: GraphVisualizationProps) {
   const [graphData, setGraphData] = useState<GraphData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>('')
@@ -39,7 +46,7 @@ export function GraphVisualization() {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect()
         setDimensions({ 
-          width: rect.width - 4,  // Subtract border width (2px each side)
+          width: rect.width - 4,
           height: 600 
         })
       }
@@ -64,75 +71,120 @@ export function GraphVisualization() {
     }
   }
 
-
   const getNodeColor = (node: Node) => {
     const colors: Record<string, string> = {
-    drug: '#3B82F6',        // blue
-    protein: '#10B981',     // green
-    disease: '#F59E0B',     // orange
-    pathway: '#8B5CF6',     // purple
-    biomarker: '#EC4899',   // pink
-    anatomy: '#F97316'      // bright orange (was teal - too close to green)
-  }
+      drug: '#3B82F6',
+      protein: '#10B981',
+      disease: '#EF4444',
+      pathway: '#8B5CF6',
+      biomarker: '#EC4899',
+      anatomy: '#F59E0B'
+    }
     return colors[node.type] || '#6B7280'
-}
-  const paintNode = (node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
-    const label = node.name
-    const fontSize = 12 / globalScale
-    const nodeSize = 5
-    
-    // Draw node circle
-    ctx.fillStyle = getNodeColor(node)
-    ctx.beginPath()
-    ctx.arc(node.x, node.y, nodeSize, 0, 2 * Math.PI, false)
-    ctx.fill()
-    
-    // Draw label
-    ctx.font = `${fontSize}px Sans-Serif`
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillStyle = '#1F2937'
-    ctx.fillText(label, node.x, node.y + nodeSize + fontSize)
   }
 
+  // Check if node is highlighted
+  const isNodeHighlighted = (nodeId: string) => {
+    return highlightedPath?.nodeIds.includes(nodeId) || false
+  }
+
+  // Check if link is highlighted
+  const isLinkHighlighted = (sourceId: string, targetId: string) => {
+    if (!highlightedPath) return false
+    const edge1 = `${sourceId}->${targetId}`
+    const edge2 = `${targetId}->${sourceId}`
+    return highlightedPath.edges.includes(edge1) || highlightedPath.edges.includes(edge2)
+  }
+
+  // Node painting function - uses closure to access highlightedPath
+  const paintNode = (node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
+  const label = node.name
+  const fontSize = 12 / globalScale
+  const highlighted = isNodeHighlighted(node.id)
+  const nodeSize = highlighted ? 8 : 5
+  
+  // Set opacity for non-highlighted nodes when a path is active
+  const opacity = highlightedPath && !highlighted ? 0.2 : 1.0
+  
+  // Draw glow if highlighted
+  if (highlighted) {
+    ctx.shadowBlur = 20
+    ctx.shadowColor = 'rgba(92, 228, 246, 0.6)'
+  }
+  
+  // Draw node circle with opacity
+  ctx.globalAlpha = opacity
+  ctx.fillStyle = highlighted ? '#8B5CF6' : getNodeColor(node)
+  ctx.beginPath()
+  ctx.arc(node.x, node.y, nodeSize, 0, 2 * Math.PI, false)
+  ctx.fill()
+  
+  // Reset shadow and alpha
+  ctx.shadowBlur = 0
+  ctx.globalAlpha = 1.0
+  
+  // Draw label with opacity
+  ctx.globalAlpha = opacity
+  ctx.font = `${fontSize}px Sans-Serif`
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillStyle = highlighted ? '#6B21A8' : '#1F2937'
+  ctx.fillText(label, node.x, node.y + nodeSize + fontSize)
+  ctx.globalAlpha = 1.0
+}
+
+  // Link painting function - uses closure to access highlightedPath
   const paintLink = (link: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
-    const fontSize = 10 / globalScale
-    const start = link.source
-    const end = link.target
-    
-    // Calculate link middle point
-    const middleX = (start.x + end.x) / 2
-    const middleY = (start.y + end.y) / 2
-    
-    // Draw link line
-    ctx.strokeStyle = '#9CA3AF'
-    ctx.lineWidth = 1 / globalScale
-    ctx.beginPath()
-    ctx.moveTo(start.x, start.y)
-    ctx.lineTo(end.x, end.y)
-    ctx.stroke()
-    
-    // Draw arrow
-    const arrowLength = 8 / globalScale
-    const angle = Math.atan2(end.y - start.y, end.x - start.x)
-    const arrowX = end.x - Math.cos(angle) * 5
-    const arrowY = end.y - Math.sin(angle) * 5
-    
-    ctx.fillStyle = '#9CA3AF'
-    ctx.beginPath()
-    ctx.moveTo(arrowX, arrowY)
-    ctx.lineTo(
-      arrowX - arrowLength * Math.cos(angle - Math.PI / 6),
-      arrowY - arrowLength * Math.sin(angle - Math.PI / 6)
-    )
-    ctx.lineTo(
-      arrowX - arrowLength * Math.cos(angle + Math.PI / 6),
-      arrowY - arrowLength * Math.sin(angle + Math.PI / 6)
-    )
-    ctx.closePath()
-    ctx.fill()
-    
-    // Draw relationship label
+  const fontSize = 10 / globalScale
+  const start = link.source
+  const end = link.target
+  
+  // Get source and target IDs properly
+  const sourceId = typeof start === 'object' ? start.id : start
+  const targetId = typeof end === 'object' ? end.id : end
+  const highlighted = isLinkHighlighted(sourceId, targetId)
+  
+  // Set opacity for non-highlighted links when a path is active
+  const opacity = highlightedPath && !highlighted ? 0.5 : 1.0
+  
+  // Calculate link middle point
+  const middleX = (start.x + end.x) / 2
+  const middleY = (start.y + end.y) / 2
+  
+  // Draw link line with opacity
+  ctx.globalAlpha = opacity
+  ctx.strokeStyle = highlighted ? '#8B5CF6' : '#9CA3AF'
+  ctx.lineWidth = highlighted ? 3 / globalScale : 1 / globalScale
+  ctx.beginPath()
+  ctx.moveTo(start.x, start.y)
+  ctx.lineTo(end.x, end.y)
+  ctx.stroke()
+  
+  // Draw arrow with opacity
+  const arrowLength = highlighted ? 10 / globalScale : 8 / globalScale
+  const angle = Math.atan2(end.y - start.y, end.x - start.x)
+  const arrowX = end.x - Math.cos(angle) * 5
+  const arrowY = end.y - Math.sin(angle) * 5
+  
+  ctx.fillStyle = highlighted ? '#8B5CF6' : '#9CA3AF'
+  ctx.beginPath()
+  ctx.moveTo(arrowX, arrowY)
+  ctx.lineTo(
+    arrowX - arrowLength * Math.cos(angle - Math.PI / 6),
+    arrowY - arrowLength * Math.sin(angle - Math.PI / 6)
+  )
+  ctx.lineTo(
+    arrowX - arrowLength * Math.cos(angle + Math.PI / 6),
+    arrowY - arrowLength * Math.sin(angle + Math.PI / 6)
+  )
+  ctx.closePath()
+  ctx.fill()
+  
+  ctx.globalAlpha = 1.0
+  
+  // Draw relationship label (only for highlighted or visible links)
+  if (highlighted || globalScale > 0.5) {
+    ctx.globalAlpha = opacity
     ctx.font = `${fontSize}px Sans-Serif`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
@@ -140,7 +192,7 @@ export function GraphVisualization() {
     // Background for label
     const labelText = link.label
     const textWidth = ctx.measureText(labelText).width
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
+    ctx.fillStyle = highlighted ? 'rgba(139, 92, 246, 0.95)' : 'rgba(255, 255, 255, 0.9)'
     ctx.fillRect(
       middleX - textWidth / 2 - 2,
       middleY - fontSize / 2 - 1,
@@ -149,9 +201,11 @@ export function GraphVisualization() {
     )
     
     // Draw text
-    ctx.fillStyle = '#6B7280'
+    ctx.fillStyle = highlighted ? '#FFFFFF' : '#6B7280'
     ctx.fillText(labelText, middleX, middleY)
+    ctx.globalAlpha = 1.0
   }
+}
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
@@ -164,11 +218,11 @@ export function GraphVisualization() {
             Drugs ({graphData?.nodes.filter(n => n.type === 'drug').length || 0})
           </span>
           <span className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-green-500"></span>
+            <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
             Proteins ({graphData?.nodes.filter(n => n.type === 'protein').length || 0})
           </span>
           <span className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-orange-500"></span>
+            <span className="w-3 h-3 rounded-full bg-red-500"></span>
             Diseases ({graphData?.nodes.filter(n => n.type === 'disease').length || 0})
           </span>
           <span className="flex items-center gap-2">
@@ -180,7 +234,7 @@ export function GraphVisualization() {
             Biomarkers ({graphData?.nodes.filter(n => n.type === 'biomarker').length || 0})
           </span>
           <span className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-teal-500"></span>
+            <span className="w-3 h-3 rounded-full bg-amber-500"></span>
             Anatomy ({graphData?.nodes.filter(n => n.type === 'anatomy').length || 0})
           </span>
         </div>
