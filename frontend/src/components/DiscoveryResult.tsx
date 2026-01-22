@@ -7,6 +7,13 @@ interface DiscoveryResultProps {
     hypothesis: string
     key_insight: string
     mechanism_summary: string
+    clinical_significance?: string
+    mechanism_explanation?: string
+    confidence_assessment?: string
+    hidden_knowledge_insight?: string
+    safety_rationale?: string
+    key_risks?: string
+    next_steps?: string[]
     top_path: {
       confidence: number
       path_length: number
@@ -43,18 +50,46 @@ export function DiscoveryResult({ result, onClose }: DiscoveryResultProps) {
         </button>
       </div>
 
-      {/* Key Insight */}
-      <div className="bg-purple-50 border-l-4 border-purple-500 p-4 mb-4">
-        <p className="text-purple-900 font-medium">
-          💡 {result.key_insight}
-        </p>
-      </div>
-
       {/* Hypothesis */}
       <div className="mb-4">
-        <h3 className="font-semibold text-gray-700 mb-2">Hypothesis:</h3>
+        <h3 className="font-semibold text-gray-700 mb-2">💡 Hypothesis:</h3>
         <p className="text-gray-600">{result.hypothesis}</p>
       </div>
+
+      {/* Clinical Significance */}
+      {result.clinical_significance && (
+        <div className="mb-4">
+          <h3 className="font-semibold text-gray-700 mb-2">💼 Clinical Significance:</h3>
+          <p className="text-gray-600">{result.clinical_significance}</p>
+        </div>
+      )}
+
+      {/* Mechanism Explanation */}
+      {result.mechanism_explanation && (
+        <div className="mb-4">
+          <h3 className="font-semibold text-gray-700 mb-2">🧬 Mechanism:</h3>
+          <p className="text-gray-600">{result.mechanism_explanation}</p>
+        </div>
+      )}
+
+      {/* Safety Rationale - NEW */}
+      {result.safety_rationale && (
+        <div className="mb-4 bg-green-50 border-l-4 border-green-500 p-4">
+          <h3 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+            <span>✅</span>
+            <span>Safety in Target Population</span>
+          </h3>
+          <p className="text-green-800 text-sm">{result.safety_rationale}</p>
+        </div>
+      )}
+
+      {/* Hidden Knowledge Insight */}
+      {result.hidden_knowledge_insight && (
+        <div className="bg-purple-50 border-l-4 border-purple-500 p-4 mb-4">
+          <h3 className="font-semibold text-purple-900 mb-2">🔍 Hidden Knowledge Bridged:</h3>
+          <p className="text-purple-800">{result.hidden_knowledge_insight}</p>
+        </div>
+      )}
 
       {/* Pathway Stats */}
       <div className="grid grid-cols-3 gap-4 mb-4">
@@ -78,11 +113,33 @@ export function DiscoveryResult({ result, onClose }: DiscoveryResultProps) {
         </div>
       </div>
 
-      {/* Mechanism Summary */}
-      <div className="mb-4">
-        <h3 className="font-semibold text-gray-700 mb-2">Mechanism:</h3>
-        <p className="text-sm text-gray-600">{result.mechanism_summary}</p>
-      </div>
+      {/* Confidence Assessment */}
+      {result.confidence_assessment && (
+        <div className="mb-4">
+          <h3 className="font-semibold text-gray-700 mb-2">📊 Confidence Assessment:</h3>
+          <p className="text-gray-600 text-sm">{result.confidence_assessment}</p>
+        </div>
+      )}
+
+      {/* Key Risks */}
+      {result.key_risks && (
+        <div className="mb-4 bg-amber-50 border-l-4 border-amber-500 p-4">
+          <h3 className="font-semibold text-amber-900 mb-2">⚠️ Key Risks:</h3>
+          <p className="text-amber-800 text-sm">{result.key_risks}</p>
+        </div>
+      )}
+
+      {/* Next Steps */}
+      {result.next_steps && result.next_steps.length > 0 && (
+        <div className="mb-4">
+          <h3 className="font-semibold text-gray-700 mb-2">📋 Recommended Next Steps:</h3>
+          <ol className="list-decimal list-inside space-y-1">
+            {result.next_steps.map((step: string, index: number) => (
+              <li key={index} className="text-gray-600 text-sm">{step}</li>
+            ))}
+          </ol>
+        </div>
+      )}
 
       {/* Detailed Path */}
       <details className="mb-4">

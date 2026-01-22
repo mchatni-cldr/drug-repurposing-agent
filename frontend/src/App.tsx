@@ -23,6 +23,7 @@ interface DiscoveryResponse {
   mechanism_explanation?: string
   confidence_assessment?: string
   hidden_knowledge_insight?: string
+  safety_rationale?: string  // ← ADD THIS
   key_risks?: string
   next_steps?: string[]
   top_path: {
@@ -114,67 +115,67 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-100">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            🧬 Drug Repurposing Discovery Platform
-          </h1>
-          <p className="text-lg text-gray-600">
-            AI-Powered Knowledge Graph for Pharma R&D
-          </p>
-        </header>
+  <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-100">
+    <div className="container mx-auto px-4 py-8">
+      {/* Header */}
+      <header className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          🧬 Drug Repurposing Discovery Platform
+        </h1>
+        <p className="text-lg text-gray-600">
+          AI-Powered Knowledge Graph for Pharma R&D
+        </p>
+      </header>
 
-        {/* Discovery Question */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <DiscoveryQuestion 
-            onDiscover={handleDiscover}
-            isLoading={discovering}
-          />
-        </div>
-
-        {/* Activity Feed */}
-        {(activitySteps.length > 0 || discovering) && (
-          <div className="max-w-4xl mx-auto mb-8">
-            <ActivityFeed 
-              steps={activitySteps}
-              isActive={discovering}
-            />
-          </div>
-        )}
-
-        {/* Discovery Result */}
-        {discoveryResult && (
-          <div className="max-w-4xl mx-auto mb-8">
-            <DiscoveryResult 
-              result={discoveryResult}
-              onClose={handleCloseResult}
-            />
-          </div>
-        )}
-
-        {/* Knowledge Graph */}
-        <div className="max-w-7xl mx-auto">
-          <GraphVisualization 
-            highlightedPath={discoveryResult ? {
-              nodeIds: discoveryResult.top_path.node_ids,
-              edges: discoveryResult.top_path.edges
-            } : undefined}
-          />
-        </div>
-
-        {/* Footer */}
-        <footer className="mt-8 text-center text-sm text-gray-500">
-          <p>Platform: Cloudera AI</p>
-          <p>Stack: CrewAI + Flask + React + Claude</p>
-          <p className="mt-2 text-xs">
-            Demo scenario: Discovering Ozempic's obesity potential from diabetes data (2017)
-          </p>
-        </footer>
+      {/* GRAPH FIRST - Always visible */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <GraphVisualization 
+          highlightedPath={discoveryResult ? {
+            nodeIds: discoveryResult.top_path.node_ids,
+            edges: discoveryResult.top_path.edges
+          } : undefined}
+        />
       </div>
+
+      {/* Discovery Question - Below graph */}
+      <div className="max-w-4xl mx-auto mb-8">
+        <DiscoveryQuestion 
+          onDiscover={handleDiscover}
+          isLoading={discovering}
+        />
+      </div>
+
+      {/* Activity Feed - Appears when running */}
+      {(activitySteps.length > 0 || discovering) && (
+        <div className="max-w-4xl mx-auto mb-8">
+          <ActivityFeed 
+            steps={activitySteps}
+            isActive={discovering}
+          />
+        </div>
+      )}
+
+      {/* Discovery Result - Appears when complete */}
+      {discoveryResult && (
+        <div className="max-w-4xl mx-auto mb-8">
+          <DiscoveryResult 
+            result={discoveryResult}
+            onClose={handleCloseResult}
+          />
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className="mt-8 text-center text-sm text-gray-500">
+        <p>Platform: Cloudera AI</p>
+        <p>Stack: AI Agents + Flask + React + Claude</p>
+        <p className="mt-2 text-xs">
+          Demo scenario: Discovering Ozempic's obesity potential from diabetes data (2017)
+        </p>
+      </footer>
     </div>
-  )
+  </div>
+)
 }
 
 export default App

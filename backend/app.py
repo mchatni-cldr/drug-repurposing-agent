@@ -1,11 +1,12 @@
 from flask import Flask, jsonify, send_from_directory, request, Response, stream_with_context
-from tools.graph_tools import bfs_find_paths, generate_mechanism_summary, score_repurposing_opportunity
-from agents.discovery_agent import run_discovery_agent  # ← Add this line
 from flask_cors import CORS
 import os
 import json
 import anthropic
 import time
+
+from tools.graph_tools import bfs_find_paths, generate_mechanism_summary, score_repurposing_opportunity
+from agents.discovery_agent import run_discovery_agent
 
 # CML project directory
 if os.path.exists('/home/cdsw'):
@@ -35,6 +36,7 @@ if ANTHROPIC_API_KEY:
     print("✓ Claude API client initialized")
 else:
     print("⚠️  Warning: ANTHROPIC_API_KEY not set")
+
 
 def extract_triplets_with_claude(text: str) -> list:
     """Extract knowledge triplets from text using Claude"""
@@ -75,17 +77,22 @@ def extract_triplets_with_claude(text: str) -> list:
     
     return triplets
 
+
 @app.route('/api/hello', methods=['GET'])
 def hello():
+    """Test endpoint"""
     return jsonify({'message': 'Hello Rameez!'})
+
 
 @app.route('/api/health', methods=['GET'])
 def health():
+    """Health check endpoint"""
     return jsonify({
         'status': 'healthy',
         'graph_entities': len(SEED_GRAPH['entities']),
         'graph_relationships': len(SEED_GRAPH['relationships'])
     })
+
 
 @app.route('/api/graph-data', methods=['GET'])
 def get_graph_data():
@@ -97,7 +104,7 @@ def get_graph_data():
             'id': entity['id'],
             'name': entity['name'],
             'type': entity['type'],
-            'group': entity['type']  # For coloring
+            'group': entity['type']
         }
         for entity in SEED_GRAPH['entities']
     ]
@@ -116,6 +123,7 @@ def get_graph_data():
         'nodes': nodes,
         'links': links
     })
+
 
 @app.route('/api/upload-publication', methods=['POST'])
 def upload_publication():
@@ -161,105 +169,6 @@ def upload_publication():
         }), 500
 
 
-@app.route('/api/discover', methods=['POST'])
-def discover():
-    """
-    Discover drug repurposing opportunities
-    """
-    try:
-        data = request.get_json()
-        question = data.get('question', '')
-        
-        if not question:
-            return jsonify({
-                'success': False,
-                'error': 'No question provided'
-            }), 400
-        
-        print(f"🔍 Discovery question: {question}")
-        
-        # Simple parsing: look for drug and disease names in question
-        # For demo, we'll use Semaglutide → Obesity
-        # In production, would use NLP to extract entities
-        
-        drug_name = "Semaglutide"
-        disease_name = "Obesity"
-        
-        # TODO: Smarter entity extraction from question
-        # For now, hardcode the demo case
-        
-        print(f"🎯 Searching: {drug_name} → {disease_name}")
-        
-        # Find paths
-        paths = bfs_find_paths(
-            SEED_GRAPH,
-            start_entity=drug_name,
-            target_entity=disease_name,
-            max_depth=10
-        )
-        
-        if not paths:
-            return jsonify({
-                'success': True,
-                'found_paths': False,
-                'message': f'No paths found between {drug_name} and {disease_name}'
-            })
-        
-        # Get top path
-        top_path = paths[0]
-        
-        # Get drug entity details
-        drug_entity = next(
-            (e for e in SEED_GRAPH['entities'] if e['name'] == drug_name),
-            {}
-        )
-        
-        # Score the opportunity
-        scores = score_repurposing_opportunity(top_path, drug_entity)
-        
-        # Generate mechanism summary
-        mechanism = generate_mechanism_summary(top_path)
-        
-        # Build discovery result
-        # Build discovery result
-        discovery = {
-            'success': True,
-            'found_paths': True,
-            'drug': drug_name,
-            'disease': disease_name,
-            'top_path': {
-                'nodes': [n['name'] for n in top_path['node_details']],
-                'node_ids': top_path['nodes'],
-                'edges': top_path['edges'],
-                'edge_details': top_path['edge_details'],  # ← Add this line
-                'mechanism': mechanism,
-                'confidence': top_path['confidence'],
-                'path_length': top_path['length'],
-                'hidden_connections': top_path.get('hidden_connections', 0)  # ← Add this line
-            },
-            'scores': scores,
-            'alternative_paths': len(paths),
-            'hypothesis': f"{drug_name} may be effective for {disease_name} treatment",
-            'mechanism_summary': f"Through {top_path['length']}-step pathway involving " +
-                            " → ".join([n['name'] for n in top_path['node_details'][1:-1]]),
-            'key_insight': f"Discovery bridges {top_path.get('hidden_connections', 0)} hidden cross-domain connections from neuroscience literature"  # ← Add this line
-        }
-        
-        print(f"✓ Discovery complete: {len(paths)} paths found")
-        print(f"  Top path: {top_path['length']} hops, {top_path['confidence']:.0%} confidence")
-        print(f"  Mechanism: {mechanism}")
-        
-        return jsonify(discovery)
-    
-    except Exception as e:
-        print(f"❌ Discovery error: {e}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
 def generate_discovery_stream(question: str):
     """
     Generator function that yields discovery progress events
@@ -298,7 +207,7 @@ def generate_discovery_stream(question: str):
         # Step 3: Agent analysis
         yield f"data: {json.dumps({'step': 'agent_analyzing', 'message': '🤖 AI Agent analyzing pathway...', 'progress': 60})}\n\n"
         
-        # Prepare path data
+        # Prepare path data for agent
         path_data = {
             'nodes': [n['name'] for n in top_path['node_details']],
             'node_types': [n['type'] for n in top_path['node_details']],
@@ -309,13 +218,13 @@ def generate_discovery_stream(question: str):
             'hidden_connections': top_path.get('hidden_connections', 0)
         }
         
-        # Run agent
+        # Run Discovery Agent
         agent_insights = run_discovery_agent(question, path_data)
         
         yield f"data: {json.dumps({'step': 'generating_insights', 'message': '💡 Generating clinical insights...', 'progress': 80})}\n\n"
         time.sleep(0.5)
         
-        # Get scores
+        # Get drug entity and scores
         drug_entity = next(
             (e for e in SEED_GRAPH['entities'] if e['name'] == drug_name),
             {}
@@ -323,7 +232,7 @@ def generate_discovery_stream(question: str):
         scores = score_repurposing_opportunity(top_path, drug_entity)
         mechanism = generate_mechanism_summary(top_path)
         
-        # Build final result
+        # Build final discovery result
         discovery = {
             'success': True,
             'found_paths': True,
@@ -341,13 +250,18 @@ def generate_discovery_stream(question: str):
             },
             'scores': scores,
             'alternative_paths': len(paths),
+            
+            # Agent-generated insights
             'hypothesis': agent_insights.get('hypothesis'),
             'clinical_significance': agent_insights.get('clinical_significance'),
             'mechanism_explanation': agent_insights.get('mechanism_explanation'),
+            'safety_rationale': agent_insights.get('safety_rationale'),
             'confidence_assessment': agent_insights.get('confidence_assessment'),
             'hidden_knowledge_insight': agent_insights.get('hidden_knowledge_insight'),
             'key_risks': agent_insights.get('key_risks'),
             'next_steps': agent_insights.get('next_steps', []),
+            
+            # Legacy summary fields
             'mechanism_summary': f"Through {top_path['length']}-step pathway involving " +
                                " → ".join([n['name'] for n in top_path['node_details'][1:-1]]),
             'key_insight': f"Discovery bridges {top_path.get('hidden_connections', 0)} hidden cross-domain connections"
@@ -384,16 +298,130 @@ def discover_stream():
     )
 
 
+@app.route('/api/discover', methods=['POST'])
+def discover():
+    """
+    Non-streaming discovery endpoint (for testing/fallback)
+    """
+    try:
+        data = request.get_json()
+        question = data.get('question', '')
+        
+        if not question:
+            return jsonify({
+                'success': False,
+                'error': 'No question provided'
+            }), 400
+        
+        print(f"🔍 Discovery question: {question}")
+        
+        # Hardcoded entities for demo
+        drug_name = "Semaglutide"
+        disease_name = "Obesity"
+        
+        print(f"🎯 Searching: {drug_name} → {disease_name}")
+        
+        # Find paths using BFS
+        paths = bfs_find_paths(
+            SEED_GRAPH,
+            start_entity=drug_name,
+            target_entity=disease_name,
+            max_depth=10
+        )
+        
+        if not paths:
+            return jsonify({
+                'success': True,
+                'found_paths': False,
+                'message': f'No paths found between {drug_name} and {disease_name}'
+            })
+        
+        # Get top path
+        top_path = paths[0]
+        
+        # Prepare path data for agent
+        path_data = {
+            'nodes': [n['name'] for n in top_path['node_details']],
+            'node_types': [n['type'] for n in top_path['node_details']],
+            'edges': top_path['edges'],
+            'edge_details': top_path['edge_details'],
+            'confidence': top_path['confidence'],
+            'path_length': top_path['length'],
+            'hidden_connections': top_path.get('hidden_connections', 0)
+        }
+        
+        # Run Discovery Agent
+        agent_insights = run_discovery_agent(question, path_data)
+        
+        # Get drug entity and scores
+        drug_entity = next(
+            (e for e in SEED_GRAPH['entities'] if e['name'] == drug_name),
+            {}
+        )
+        scores = score_repurposing_opportunity(top_path, drug_entity)
+        mechanism = generate_mechanism_summary(top_path)
+        
+        # Build discovery result
+        discovery = {
+            'success': True,
+            'found_paths': True,
+            'drug': agent_insights.get('drug_name', drug_name),
+            'disease': agent_insights.get('disease_name', disease_name),
+            'top_path': {
+                'nodes': [n['name'] for n in top_path['node_details']],
+                'node_ids': top_path['nodes'],
+                'edges': top_path['edges'],
+                'edge_details': top_path['edge_details'],
+                'mechanism': mechanism,
+                'confidence': top_path['confidence'],
+                'path_length': top_path['length'],
+                'hidden_connections': top_path.get('hidden_connections', 0)
+            },
+            'scores': scores,
+            'alternative_paths': len(paths),
+            
+            # Agent-generated insights
+            'hypothesis': agent_insights.get('hypothesis'),
+            'clinical_significance': agent_insights.get('clinical_significance'),
+            'mechanism_explanation': agent_insights.get('mechanism_explanation'),
+            'safety_rationale': agent_insights.get('safety_rationale'),
+            'confidence_assessment': agent_insights.get('confidence_assessment'),
+            'hidden_knowledge_insight': agent_insights.get('hidden_knowledge_insight'),
+            'key_risks': agent_insights.get('key_risks'),
+            'next_steps': agent_insights.get('next_steps', []),
+            
+            # Legacy summary fields
+            'mechanism_summary': f"Through {top_path['length']}-step pathway involving " +
+                               " → ".join([n['name'] for n in top_path['node_details'][1:-1]]),
+            'key_insight': f"Discovery bridges {top_path.get('hidden_connections', 0)} hidden cross-domain connections"
+        }
+        
+        print(f"✓ Discovery complete: {len(paths)} paths found")
+        print(f"  Top path: {top_path['length']} hops, {top_path['confidence']:.0%} confidence")
+        
+        return jsonify(discovery)
+    
+    except Exception as e:
+        print(f"❌ Discovery error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 
 # Serve React frontend
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
+    """Serve the React frontend"""
     static_dir = os.path.join(PROJECT_DIR, 'frontend/dist')
     if path and os.path.exists(os.path.join(static_dir, path)):
         return send_from_directory(static_dir, path)
     return send_from_directory(static_dir, 'index.html')
 
+
 if __name__ == '__main__':
     port = int(os.environ.get('CDSW_APP_PORT', 8080))
-    app.run(host='127.0.0.1', port=port, debug=True)
+    app.run(host='127.0.0.1', port=port, debug=False, threaded=True)

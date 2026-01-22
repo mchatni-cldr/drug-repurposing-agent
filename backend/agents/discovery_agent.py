@@ -15,13 +15,6 @@ claude_client = Anthropic(api_key=ANTHROPIC_API_KEY)
 def run_discovery_agent(question: str, path_data: dict) -> dict:
     """
     Run the discovery agent to analyze a repurposing opportunity
-    
-    Args:
-        question: User's question
-        path_data: Dictionary containing the discovered path from BFS
-    
-    Returns:
-        Enhanced discovery insights
     """
     
     # Load prompt template
@@ -50,14 +43,28 @@ def run_discovery_agent(question: str, path_data: dict) -> dict:
     # Extract JSON from response
     response_text = response.content[0].text
     
+    # DEBUG: Print raw response
+    print("=" * 80)
+    print("RAW AGENT RESPONSE:")
+    print(response_text)
+    print("=" * 80)
+    
     # Remove markdown code fences if present
     response_text = response_text.replace('```json', '').replace('```', '').strip()
     
     # Parse JSON
     try:
         insights = json.loads(response_text)
+        
+        # DEBUG: Print parsed keys
+        print(f"✓ Parsed JSON keys: {list(insights.keys())}")
+        print(f"✓ Has safety_rationale: {'safety_rationale' in insights}")
+        if 'safety_rationale' in insights:
+            print(f"✓ Safety rationale value: {insights['safety_rationale'][:100]}...")
+        
         print(f"✓ Discovery Agent complete")
         return insights
+        
     except json.JSONDecodeError as e:
         print(f"❌ Failed to parse agent response: {e}")
         print(f"Response: {response_text}")

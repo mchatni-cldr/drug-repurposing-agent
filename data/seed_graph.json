@@ -18,6 +18,20 @@
       "knowledge_domain": "pharma_clinical"
     },
     {
+      "id": "BIO_007",
+      "name": "Blood Glucose Level",
+      "type": "biomarker",
+      "measures": "glucose_concentration",
+      "knowledge_domain": "clinical_diagnostics"
+    },
+    {
+      "id": "MECH_001",
+      "name": "Glucose-Dependent Insulin Secretion",
+      "type": "mechanism",
+      "function": "conditional_insulin_release",
+      "knowledge_domain": "pharmacology"
+    },
+    {
       "id": "DRUG_002",
       "name": "Metformin",
       "type": "drug",
@@ -421,6 +435,43 @@
       "evidence": "SUSTAIN_trials",
       "note": "Primary endpoint in diabetes trials",
       "hidden_knowledge": false
+    },
+    {
+      "source": "PROT_001",
+      "relation": "activates_only_when_elevated",
+      "target": "BIO_007",
+      "confidence": 0.97,
+      "evidence": "glucose_dependence",
+      "note": "KEY SAFETY: GLP-1R only stimulates insulin when blood glucose is HIGH. No effect when glucose is normal.",
+      "safety_mechanism": true,
+      "hidden_knowledge": false
+    },
+    {
+      "source": "BIO_007",
+      "relation": "gates",
+      "target": "MECH_001",
+      "confidence": 0.98,
+      "evidence": "conditional_mechanism",
+      "note": "Blood glucose level controls whether insulin is released",
+      "safety_mechanism": true
+    },
+    {
+      "source": "MECH_001",
+      "relation": "triggers",
+      "target": "PROT_002",
+      "confidence": 0.96,
+      "evidence": "insulin_secretion",
+      "note": "Only when glucose is elevated does insulin get released"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "operates_independently_of",
+      "target": "BIO_007",
+      "confidence": 0.92,
+      "evidence": "brain_mechanism",
+      "note": "CRITICAL: Brain appetite effects (hypothalamus) work regardless of glucose levels. Weight loss mechanism is glucose-independent.",
+      "safety_mechanism": true,
+      "target_secondary": "ANAT_001"
     }
   ]
 }
