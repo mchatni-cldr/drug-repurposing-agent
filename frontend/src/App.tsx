@@ -2,6 +2,14 @@ import React, { useState } from 'react'
 import { GraphVisualization } from './components/GraphVisualization'
 import { DiscoveryQuestion } from './components/DiscoveryQuestion'
 import { DiscoveryResult } from './components/DiscoveryResult'
+import { ActivityFeed } from './components/ActivityFeed'
+
+interface ActivityStep {
+  step: string
+  message: string
+  progress: number
+  timestamp: number
+}
 
 interface DiscoveryResponse {
   success: boolean
@@ -11,6 +19,12 @@ interface DiscoveryResponse {
   hypothesis: string
   key_insight: string
   mechanism_summary: string
+  clinical_significance?: string
+  mechanism_explanation?: string
+  confidence_assessment?: string
+  hidden_knowledge_insight?: string
+  key_risks?: string
+  next_steps?: string[]
   top_path: {
     node_ids: string[]
     edges: string[]
@@ -27,14 +41,16 @@ interface DiscoveryResponse {
 function App() {
   const [discovering, setDiscovering] = useState(false)
   const [discoveryResult, setDiscoveryResult] = useState<DiscoveryResponse | null>(null)
+  const [activitySteps, setActivitySteps] = useState<ActivityStep[]>([])
 
   const handleDiscover = async (question: string) => {
     console.log('Discovery question:', question)
     setDiscovering(true)
     setDiscoveryResult(null)
+    setActivitySteps([])
     
     try {
-      const response = await fetch('/api/discover', {
+      const response = await fetch('/api/discover-stream', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,23 +62,55 @@ function App() {
         throw new Error(`Discovery failed: ${response.statusText}`)
       }
 
-      const data = await response.json()
-      
-      if (data.success && data.found_paths) {
-        setDiscoveryResult(data)
-      } else {
-        alert('No paths found between the entities.')
+      const reader = response.body?.getReader()
+      const decoder = new TextDecoder()
+
+      if (!reader) {
+        throw new Error('Response body is not readable')
+      }
+
+      while (true) {
+        const { done, value } = await reader.read()
+        
+        if (done) break
+
+        const chunk = decoder.decode(value)
+        const lines = chunk.split('\n')
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = JSON.parse(line.substring(6))
+            
+            // Add to activity feed
+            setActivitySteps(prev => [...prev, {
+              ...data,
+              timestamp: Date.now()
+            }])
+
+            // If complete, set result
+            if (data.step === 'complete') {
+              setDiscoveryResult(data.result)
+              setDiscovering(false)
+            }
+
+            // If error, show alert
+            if (data.step === 'error') {
+              alert(data.message)
+              setDiscovering(false)
+            }
+          }
+        }
       }
     } catch (error) {
       console.error('Discovery error:', error)
       alert(error instanceof Error ? error.message : 'Discovery failed')
-    } finally {
       setDiscovering(false)
     }
   }
 
   const handleCloseResult = () => {
     setDiscoveryResult(null)
+    setActivitySteps([])
   }
 
   return (
@@ -85,6 +133,16 @@ function App() {
             isLoading={discovering}
           />
         </div>
+
+        {/* Activity Feed */}
+        {(activitySteps.length > 0 || discovering) && (
+          <div className="max-w-4xl mx-auto mb-8">
+            <ActivityFeed 
+              steps={activitySteps}
+              isActive={discovering}
+            />
+          </div>
+        )}
 
         {/* Discovery Result */}
         {discoveryResult && (
