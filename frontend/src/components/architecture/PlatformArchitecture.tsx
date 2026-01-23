@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { DataSources } from './DataSources'
-import { DataPipeline } from './DataPipeline'
-import { ComputationalDiscovery } from './ComputationalDiscovery'
-import { GraphBuilder } from './GraphBuilder'
-import { AIAgents } from './AIAgents'
+import { HubAndSpoke } from './HubAndSpoke'
 import { PlatformStats } from './PlatformStats'
-import { DataFlowVisualization } from './DataFlowVisualization'
 
 const PHASES = [
   {
@@ -14,23 +9,18 @@ const PHASES = [
     duration: 8000
   },
   {
-    name: 'Data Pipeline',
-    message: 'Cloudera Data Flow harmonizes heterogeneous data sources',
-    duration: 8000
+    name: 'Data Ingestion',
+    message: 'Multiple paths converge: Direct NiFi, CDE harmonization, Cloudera AI compute',
+    duration: 10000
   },
   {
-    name: 'Computational Discovery',
-    message: 'GWAS, PheWAS, and molecular docking create NEW knowledge through heavy compute',
-    duration: 12000
-  },
-  {
-    name: 'Graph Building',
-    message: 'Knowledge graph integrates extracted + computed insights in real-time',
+    name: 'Graph Integration',
+    message: 'Knowledge Graph integrates all data - becomes central hub',
     duration: 10000
   },
   {
     name: 'AI Discovery',
-    message: 'AI agents find insights in 3 seconds that take humans 4 years',
+    message: 'Agents query graph + invoke Discovery Compute on-demand',
     duration: 10000
   }
 ]
@@ -65,27 +55,18 @@ export function PlatformArchitecture() {
           Cloudera Platform Architecture
         </h1>
         <p className="text-xl text-gray-300">
-          From Fragmented Data to AI-Powered Insights
+          Knowledge Graph as Central Integration Hub
         </p>
       </header>
 
-      {/* Stage Flow - 5 columns */}
-      <div className="grid grid-cols-5 gap-4 max-w-[1400px] mx-auto mb-8">
-        <DataSources active={phase === 0} />
-        <DataPipeline active={phase === 1} />
-        <ComputationalDiscovery active={phase === 2} />
-        <GraphBuilder active={phase === 3} />
-        <AIAgents active={phase === 4} />
-      </div>
-
-      {/* Data Flow Visualization */}
-      <DataFlowVisualization phase={phase} />
+      {/* Hub and Spoke Visualization */}
+      <HubAndSpoke phase={phase} />
 
       {/* Progress Bar */}
-      <div className="max-w-5xl mx-auto mb-8">
+      <div className="max-w-5xl mx-auto mb-12">
         <div className="flex items-center gap-4 mb-3">
-          <div className="text-sm font-medium text-gray-300 min-w-[200px]">
-            Phase {phase + 1}/5: {PHASES[phase].name}
+          <div className="text-sm font-medium text-gray-300 min-w-[180px]">
+            Phase {phase + 1}/4: {PHASES[phase].name}
           </div>
           <div className="flex-1 h-3 bg-white/10 rounded-full overflow-hidden">
             <div 
@@ -112,7 +93,7 @@ export function PlatformArchitecture() {
           <span>•</span>
           <span>Cloudera Data Engineering (Spark)</span>
           <span>•</span>
-          <span>Cloudera Machine Learning (GPU)</span>
+          <span>Cloudera AI (GPU Compute)</span>
           <span>•</span>
           <span>Apache Iceberg</span>
           <span>•</span>

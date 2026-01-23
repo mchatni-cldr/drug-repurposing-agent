@@ -156,13 +156,13 @@ function App() {
         
         {/* Tab Content */}
         {activeTab === 'discovery' ? (
-          <div className="container mx-auto px-6 py-8">
-            {/* Header */}
+          <div className="container mx-auto px-6 pb-8">
+            {/* Header - FIXED SIZE */}
             <header className="text-center mb-16">
-              <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Drug Repurposing Discovery
               </h1>
-              <p className="text-xl text-gray-300">
+              <p className="text-lg text-gray-300">
                 AI-Powered Knowledge Graph for Pharmaceutical R&D
               </p>
             </header>
