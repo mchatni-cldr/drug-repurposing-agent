@@ -29,137 +29,150 @@ interface DiscoveryResultProps {
 
 export function DiscoveryResult({ result, onClose }: DiscoveryResultProps) {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-purple-500">
+    <div>
       {/* Header */}
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex justify-between items-start p-8 border-b border-white/10">
         <div>
-          <h2 className="text-2xl font-bold text-purple-700 mb-2">
-            🎯 Discovery Result
+          <h2 className="text-2xl font-semibold text-white mb-3">
+            Discovery Result
           </h2>
-          <p className="text-lg text-gray-700">
-            <span className="font-semibold text-blue-600">{result.drug}</span>
-            {' → '}
-            <span className="font-semibold text-red-600">{result.disease}</span>
+          <p className="text-lg">
+            <span className="text-cyan-400 font-medium">{result.drug}</span>
+            <span className="text-gray-400 mx-2">→</span>
+            <span className="text-blue-400 font-medium">{result.disease}</span>
           </p>
         </div>
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 text-2xl"
+          className="text-gray-400 hover:text-white text-2xl transition-colors"
         >
           ×
         </button>
       </div>
 
-      {/* Hypothesis */}
-      <div className="mb-4">
-        <h3 className="font-semibold text-gray-700 mb-2">💡 Hypothesis:</h3>
-        <p className="text-gray-600">{result.hypothesis}</p>
-      </div>
-
-      {/* Clinical Significance */}
-      {result.clinical_significance && (
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-700 mb-2">💼 Clinical Significance:</h3>
-          <p className="text-gray-600">{result.clinical_significance}</p>
+      <div className="p-8 space-y-8">
+        {/* Hypothesis */}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3">Hypothesis</h3>
+          <p className="text-white text-lg leading-relaxed">{result.hypothesis}</p>
         </div>
-      )}
 
-      {/* Mechanism Explanation */}
-      {result.mechanism_explanation && (
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-700 mb-2">🧬 Mechanism:</h3>
-          <p className="text-gray-600">{result.mechanism_explanation}</p>
-        </div>
-      )}
-
-      {/* Safety Rationale - NEW */}
-      {result.safety_rationale && (
-        <div className="mb-4 bg-green-50 border-l-4 border-green-500 p-4">
-          <h3 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
-            <span>✅</span>
-            <span>Safety in Target Population</span>
-          </h3>
-          <p className="text-green-800 text-sm">{result.safety_rationale}</p>
-        </div>
-      )}
-
-      {/* Hidden Knowledge Insight */}
-      {result.hidden_knowledge_insight && (
-        <div className="bg-purple-50 border-l-4 border-purple-500 p-4 mb-4">
-          <h3 className="font-semibold text-purple-900 mb-2">🔍 Hidden Knowledge Bridged:</h3>
-          <p className="text-purple-800">{result.hidden_knowledge_insight}</p>
-        </div>
-      )}
-
-      {/* Pathway Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-4">
-        <div className="bg-blue-50 rounded-lg p-3 text-center">
-          <div className="text-2xl font-bold text-blue-600">
-            {result.top_path.path_length}
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-2xl p-5 text-center border border-blue-400/20">
+            <div className="text-3xl font-bold text-blue-400 mb-1">
+              {result.top_path.path_length}
+            </div>
+            <div className="text-sm text-blue-200">pathway hops</div>
           </div>
-          <div className="text-xs text-blue-800">hops</div>
-        </div>
-        <div className="bg-green-50 rounded-lg p-3 text-center">
-          <div className="text-2xl font-bold text-green-600">
-            {(result.top_path.confidence * 100).toFixed(0)}%
+          <div className="bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 rounded-2xl p-5 text-center border border-cyan-400/20">
+            <div className="text-3xl font-bold text-cyan-400 mb-1">
+              {(result.top_path.confidence * 100).toFixed(0)}%
+            </div>
+            <div className="text-sm text-cyan-200">confidence</div>
           </div>
-          <div className="text-xs text-green-800">confidence</div>
-        </div>
-        <div className="bg-purple-50 rounded-lg p-3 text-center">
-          <div className="text-2xl font-bold text-purple-600">
-            {result.top_path.hidden_connections}
+          <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 rounded-2xl p-5 text-center border border-purple-400/20">
+            <div className="text-3xl font-bold text-purple-400 mb-1">
+              {result.top_path.hidden_connections}
+            </div>
+            <div className="text-sm text-purple-200">hidden links</div>
           </div>
-          <div className="text-xs text-purple-800">hidden links</div>
         </div>
-      </div>
 
-      {/* Confidence Assessment */}
-      {result.confidence_assessment && (
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-700 mb-2">📊 Confidence Assessment:</h3>
-          <p className="text-gray-600 text-sm">{result.confidence_assessment}</p>
-        </div>
-      )}
+        {/* Clinical Significance */}
+        {result.clinical_significance && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3">Clinical Significance</h3>
+            <p className="text-gray-200 leading-relaxed">{result.clinical_significance}</p>
+          </div>
+        )}
 
-      {/* Key Risks */}
-      {result.key_risks && (
-        <div className="mb-4 bg-amber-50 border-l-4 border-amber-500 p-4">
-          <h3 className="font-semibold text-amber-900 mb-2">⚠️ Key Risks:</h3>
-          <p className="text-amber-800 text-sm">{result.key_risks}</p>
-        </div>
-      )}
+        {/* Mechanism */}
+        {result.mechanism_explanation && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3">Mechanism of Action</h3>
+            <p className="text-gray-200 leading-relaxed">{result.mechanism_explanation}</p>
+          </div>
+        )}
 
-      {/* Next Steps */}
-      {result.next_steps && result.next_steps.length > 0 && (
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-700 mb-2">📋 Recommended Next Steps:</h3>
-          <ol className="list-decimal list-inside space-y-1">
-            {result.next_steps.map((step: string, index: number) => (
-              <li key={index} className="text-gray-600 text-sm">{step}</li>
-            ))}
-          </ol>
-        </div>
-      )}
+        {/* Safety */}
+        {result.safety_rationale && (
+          <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 rounded-2xl p-6 border border-emerald-400/20">
+            <h3 className="text-sm font-semibold text-emerald-300 uppercase tracking-wide mb-3 flex items-center gap-2">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              Safety Profile
+            </h3>
+            <p className="text-emerald-100 leading-relaxed">{result.safety_rationale}</p>
+          </div>
+        )}
 
-      {/* Detailed Path */}
-      <details className="mb-4">
-        <summary className="cursor-pointer text-sm font-semibold text-gray-700 hover:text-purple-600">
-          View Detailed Pathway →
-        </summary>
-        <div className="mt-2 p-3 bg-gray-50 rounded text-xs font-mono whitespace-pre-wrap">
-          {result.top_path.mechanism}
-        </div>
-      </details>
+        {/* Hidden Knowledge */}
+        {result.hidden_knowledge_insight && (
+          <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 rounded-2xl p-6 border border-purple-400/20">
+            <h3 className="text-sm font-semibold text-purple-300 uppercase tracking-wide mb-3">Cross-Domain Discovery</h3>
+            <p className="text-purple-100 leading-relaxed">{result.hidden_knowledge_insight}</p>
+          </div>
+        )}
 
-      {/* Overall Score */}
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4">
-        <div className="flex items-center justify-between">
-          <span className="font-semibold text-gray-700">
-            Repurposing Opportunity Score:
-          </span>
-          <span className="text-2xl font-bold text-purple-600">
-            {(result.scores.overall_score * 100).toFixed(0)}/100
-          </span>
+        {/* Confidence */}
+        {result.confidence_assessment && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3">Confidence Assessment</h3>
+            <p className="text-gray-200 leading-relaxed">{result.confidence_assessment}</p>
+          </div>
+        )}
+
+        {/* Risks */}
+        {result.key_risks && (
+          <div className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 rounded-2xl p-6 border border-amber-400/20">
+            <h3 className="text-sm font-semibold text-amber-300 uppercase tracking-wide mb-3">Key Considerations</h3>
+            <p className="text-amber-100 leading-relaxed">{result.key_risks}</p>
+          </div>
+        )}
+
+        {/* Next Steps */}
+        {result.next_steps && result.next_steps.length > 0 && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-4">Recommended Actions</h3>
+            <ol className="space-y-3">
+              {result.next_steps.map((step: string, index: number) => (
+                <li key={index} className="flex gap-4 text-gray-200">
+                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 text-cyan-400 flex items-center justify-center text-sm font-semibold border border-cyan-400/30">
+                    {index + 1}
+                  </span>
+                  <span className="leading-relaxed pt-0.5">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
+        {/* Detailed Path */}
+        <details className="group">
+          <summary className="cursor-pointer text-sm font-semibold text-gray-300 hover:text-cyan-400 transition-colors list-none flex items-center gap-2 uppercase tracking-wide">
+            <span className="transform group-open:rotate-90 transition-transform text-cyan-400">▶</span>
+            View Detailed Pathway
+          </summary>
+          <div className="mt-4 p-5 bg-black/20 rounded-2xl border border-white/10 text-xs font-mono text-gray-300 whitespace-pre-wrap leading-relaxed">
+            {result.top_path.mechanism}
+          </div>
+        </details>
+
+        {/* Opportunity Score */}
+        <div className="bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-purple-500/10 rounded-2xl p-6 border border-blue-400/20">
+          <div className="flex items-center justify-between">
+            <span className="text-base font-semibold text-gray-200 uppercase tracking-wide">
+              Repurposing Opportunity Score
+            </span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-5xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                {(result.scores.overall_score * 100).toFixed(0)}
+              </span>
+              <span className="text-lg text-gray-400">/100</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

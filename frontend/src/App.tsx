@@ -23,7 +23,7 @@ interface DiscoveryResponse {
   mechanism_explanation?: string
   confidence_assessment?: string
   hidden_knowledge_insight?: string
-  safety_rationale?: string  // ← ADD THIS
+  safety_rationale?: string
   key_risks?: string
   next_steps?: string[]
   top_path: {
@@ -82,19 +82,16 @@ function App() {
           if (line.startsWith('data: ')) {
             const data = JSON.parse(line.substring(6))
             
-            // Add to activity feed
             setActivitySteps(prev => [...prev, {
               ...data,
               timestamp: Date.now()
             }])
 
-            // If complete, set result
             if (data.step === 'complete') {
               setDiscoveryResult(data.result)
               setDiscovering(false)
             }
 
-            // If error, show alert
             if (data.step === 'error') {
               alert(data.message)
               setDiscovering(false)
@@ -115,67 +112,83 @@ function App() {
   }
 
   return (
-  <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-100">
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <header className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          🧬 Drug Repurposing Discovery Platform
-        </h1>
-        <p className="text-lg text-gray-600">
-          AI-Powered Knowledge Graph for Pharma R&D
-        </p>
-      </header>
-
-      {/* GRAPH FIRST - Always visible */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <GraphVisualization 
-          highlightedPath={discoveryResult ? {
-            nodeIds: discoveryResult.top_path.node_ids,
-            edges: discoveryResult.top_path.edges
-          } : undefined}
-        />
+    <div className="min-h-screen bg-gradient-to-b from-[#0A0E27] via-[#1A1F3A] to-[#0A0E27]">
+      {/* Subtle animated gradient overlay */}
+      <div className="fixed inset-0 opacity-30">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-cyan-600/10"></div>
       </div>
+      
+      <div className="relative">
+        <div className="container mx-auto px-6 py-16">
+          {/* Header */}
+          <header className="text-center mb-16">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+              Drug Repurposing Discovery
+            </h1>
+            <p className="text-xl text-gray-300">
+              AI-Powered Knowledge Graph for Pharmaceutical R&D
+            </p>
+          </header>
 
-      {/* Discovery Question - Below graph */}
-      <div className="max-w-4xl mx-auto mb-8">
-        <DiscoveryQuestion 
-          onDiscover={handleDiscover}
-          isLoading={discovering}
-        />
+          {/* Graph - Glowing Card */}
+          <div className="max-w-7xl mx-auto mb-12">
+            <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 shadow-[0_8px_32px_rgba(99,102,241,0.15)] overflow-hidden">
+              <GraphVisualization 
+                highlightedPath={discoveryResult ? {
+                  nodeIds: discoveryResult.top_path.node_ids,
+                  edges: discoveryResult.top_path.edges
+                } : undefined}
+              />
+            </div>
+          </div>
+
+          {/* Discovery Question - Glowing Card */}
+          <div className="max-w-4xl mx-auto mb-12">
+            <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 shadow-[0_8px_32px_rgba(99,102,241,0.15)]">
+              <DiscoveryQuestion 
+                onDiscover={handleDiscover}
+                isLoading={discovering}
+              />
+            </div>
+          </div>
+
+          {/* Activity Feed - Glowing Card */}
+          {(activitySteps.length > 0 || discovering) && (
+            <div className="max-w-4xl mx-auto mb-12">
+              <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 shadow-[0_8px_32px_rgba(99,102,241,0.15)]">
+                <ActivityFeed 
+                  steps={activitySteps}
+                  isActive={discovering}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Discovery Result - Glowing Card */}
+          {discoveryResult && (
+            <div className="max-w-4xl mx-auto mb-12">
+              <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 shadow-[0_8px_32px_rgba(99,102,241,0.15)]">
+                <DiscoveryResult 
+                  result={discoveryResult}
+                  onClose={handleCloseResult}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Footer */}
+          <footer className="mt-24 pt-12 border-t border-white/5 text-center">
+            <p className="text-base text-gray-300 mb-2">
+              Powered by <span className="text-cyan-400 font-semibold">Cloudera Machine Learning</span>
+            </p>
+            <p className="text-sm text-gray-500">
+              AI Agents • Knowledge Graphs • Claude API
+            </p>
+          </footer>
+        </div>
       </div>
-
-      {/* Activity Feed - Appears when running */}
-      {(activitySteps.length > 0 || discovering) && (
-        <div className="max-w-4xl mx-auto mb-8">
-          <ActivityFeed 
-            steps={activitySteps}
-            isActive={discovering}
-          />
-        </div>
-      )}
-
-      {/* Discovery Result - Appears when complete */}
-      {discoveryResult && (
-        <div className="max-w-4xl mx-auto mb-8">
-          <DiscoveryResult 
-            result={discoveryResult}
-            onClose={handleCloseResult}
-          />
-        </div>
-      )}
-
-      {/* Footer */}
-      <footer className="mt-8 text-center text-sm text-gray-500">
-        <p>Platform: Cloudera AI</p>
-        <p>Stack: AI Agents + Flask + React + Claude</p>
-        <p className="mt-2 text-xs">
-          Demo scenario: Discovering Ozempic's obesity potential from diabetes data (2017)
-        </p>
-      </footer>
     </div>
-  </div>
-)
+  )
 }
 
 export default App
