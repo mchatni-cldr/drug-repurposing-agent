@@ -4,7 +4,7 @@ TASK:
 Given a question about drug repurposing, you will:
 1. Extract the drug name and target disease from the question
 2. Analyze the discovered pathway from the knowledge graph
-3. Generate a comprehensive discovery report including safety assessment
+3. Generate a comprehensive discovery report including safety assessment and knowledge source analysis
 
 INPUT:
 - User question: {QUESTION}
@@ -28,6 +28,7 @@ OUTPUT FORMAT (JSON only, no markdown, no preamble):
   "clinical_significance": "2-3 sentences on commercial/clinical importance, market size, time savings",
   "mechanism_explanation": "2-3 sentences explaining biological mechanism in accessible language",
   "safety_rationale": "REQUIRED: 2-4 sentences addressing whether the drug is safe for the new target population. Consider: (1) If the drug's original mechanism could harm the new population, (2) Whether there are conditional/context-dependent effects, (3) How the therapeutic mechanism differs from potential adverse mechanisms. If pathway includes relationships marked 'safety_mechanism: true', explain their significance.",
+  "knowledge_fragmentation": "REQUIRED: 2-3 sentences explaining which organizational silos were bridged (e.g., 'This discovery connects pharmaceutical data from Novo Nordisk, academic neuroscience from UCLA published 2008-2015, and clinical observations from hospitals'). Emphasize that no single organization had the complete picture.",
   "confidence_assessment": "assessment of evidence strength with reasoning and percentage",
   "hidden_knowledge_insight": "explanation of what cross-domain knowledge was bridged",
   "key_risks": "potential concerns, side effects, or unknowns",
@@ -53,12 +54,31 @@ Common safety patterns to address:
 - CNS drugs → peripheral conditions: explain blood-brain barrier considerations
 - Metabolic drugs → different metabolic conditions: explain conditional activation
 
+KNOWLEDGE FRAGMENTATION ANALYSIS:
+Pay attention to the knowledge sources in the pathway. The graph contains entities from multiple organizational silos:
+
+- pharma_proprietary: Drug company's internal knowledge (e.g., Novo Nordisk, Eli Lilly)
+- fundamental_biology: Decades of publicly funded research (NIH, universities)
+- academic_neuroscience: University research, often not drug-focused (UCLA, Yale, Harvard)
+- clinical_observation: Hospital/medical center observations, case reports
+- public_databases: Standardized medical knowledge (WHO, ICD-10, PubMed)
+
+In your "knowledge_fragmentation" field, emphasize:
+- How many different organizational silos were bridged in the discovery
+- Which specific organizations contributed which pieces (e.g., "Novo Nordisk's drug chemistry + UCLA neuroscience 2008")
+- Why this knowledge wasn't connected before (different fields, different incentives, different publishing venues)
+- The temporal gap between knowledge generation (e.g., "neuroscience published 2008, pharma realized 2019")
+- That NO SINGLE ORGANIZATION had the complete picture
+
+Example: "This discovery bridges knowledge from Novo Nordisk's pharmaceutical development (drug chemistry, diabetes trials), UCLA and Yale neuroscience research published 2008-2015 (GLP-1 receptor expression in brain appetite centers), hospital endocrinology observations from 2015-2017 (unexpected weight loss in diabetes patients), and fundamental GLP-1 receptor biology from NIH-funded research in the 1990s. No single organization had the complete picture - the neuroscientists knew the brain mechanism but didn't think about drug applications, while Novo knew the drug but didn't systematically follow neuroscience literature outside of endocrinology."
+
 GUIDELINES:
 - Be specific and actionable (audience: pharma executives and clinical teams)
 - Highlight hidden knowledge - what silos were bridged
 - Quantify where possible (market size, time saved, confidence %)
 - Professional but accessible language
 - The safety_rationale field is MANDATORY - always assess safety for repurposing
+- The knowledge_fragmentation field is MANDATORY - always analyze organizational silos bridged
 - Use evidence from the pathway when available
 - Be honest about unknowns - if safety data is lacking, state it
 

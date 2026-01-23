@@ -6,6 +6,7 @@ interface Node {
   name: string
   type: string
   group: string
+  knowledge_source?: string
 }
 
 interface Link {
@@ -35,12 +36,10 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
   const graphRef = useRef<any>()
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Fetch graph data
   useEffect(() => {
     fetchGraphData()
   }, [])
 
-  // Update dimensions on mount and resize
   useLayoutEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -72,23 +71,20 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
   }
 
   const getNodeColor = (node: Node) => {
-    const colors: Record<string, string> = {
-      drug: '#3B82F6',
-      protein: '#10B981',
-      disease: '#EF4444',
-      pathway: '#8B5CF6',
-      biomarker: '#EC4899',
-      anatomy: '#F59E0B'
+    const sourceColors: Record<string, string> = {
+      pharma_proprietary: '#3B82F6',      // Blue - Pharma
+      fundamental_biology: '#10B981',     // Green - Biology
+      academic_neuroscience: '#8B5CF6',   // Purple - Neuroscience
+      clinical_observation: '#EF4444',    // Red - Clinical
+      public_databases: '#F59E0B'         // Amber - Public
     }
-    return colors[node.type] || '#6B7280'
+    return sourceColors[node.knowledge_source || ''] || '#6B7280'
   }
 
-  // Check if node is highlighted
   const isNodeHighlighted = (nodeId: string) => {
     return highlightedPath?.nodeIds.includes(nodeId) || false
   }
 
-  // Check if link is highlighted
   const isLinkHighlighted = (sourceId: string, targetId: string) => {
     if (!highlightedPath) return false
     const edge1 = `${sourceId}->${targetId}`
@@ -96,34 +92,28 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
     return highlightedPath.edges.includes(edge1) || highlightedPath.edges.includes(edge2)
   }
 
-  // Node painting function
   const paintNode = (node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
     const label = node.name
     const fontSize = 12 / globalScale
     const highlighted = isNodeHighlighted(node.id)
     const nodeSize = highlighted ? 9 : 5
     
-    // Set opacity for non-highlighted nodes when a path is active
     const opacity = highlightedPath && !highlighted ? 0.3 : 1.0
     
-    // Draw glow if highlighted
     if (highlighted) {
       ctx.shadowBlur = 25
       ctx.shadowColor = 'rgba(34, 211, 238, 0.8)'
     }
     
-    // Draw node circle with opacity
     ctx.globalAlpha = opacity
     ctx.fillStyle = highlighted ? '#22D3EE' : getNodeColor(node)
     ctx.beginPath()
     ctx.arc(node.x, node.y, nodeSize, 0, 2 * Math.PI, false)
     ctx.fill()
     
-    // Reset shadow and alpha
     ctx.shadowBlur = 0
     ctx.globalAlpha = 1.0
     
-    // Draw label with opacity
     ctx.globalAlpha = opacity
     ctx.font = `${fontSize}px Sans-Serif`
     ctx.textAlign = 'center'
@@ -134,25 +124,20 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
     ctx.globalAlpha = 1.0
   }
 
-  // Link painting function
   const paintLink = (link: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
     const fontSize = 10 / globalScale
     const start = link.source
     const end = link.target
     
-    // Get source and target IDs properly
     const sourceId = typeof start === 'object' ? start.id : start
     const targetId = typeof end === 'object' ? end.id : end
     const highlighted = isLinkHighlighted(sourceId, targetId)
     
-    // Set opacity for non-highlighted links when a path is active
     const opacity = highlightedPath && !highlighted ? 0.2 : 1.0
     
-    // Calculate link middle point
     const middleX = (start.x + end.x) / 2
     const middleY = (start.y + end.y) / 2
     
-    // Draw link line with opacity
     ctx.globalAlpha = opacity
     ctx.strokeStyle = highlighted ? '#22D3EE' : '#94A3B8'
     ctx.lineWidth = highlighted ? 4 / globalScale : 1 / globalScale
@@ -161,16 +146,13 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
     ctx.lineTo(end.x, end.y)
     ctx.stroke()
     
-    // Reset alpha before drawing arrow (so it's always fully visible)
     ctx.globalAlpha = 1.0
     
-    // Draw arrow
     const arrowLength = highlighted ? 14 / globalScale : 8 / globalScale
     const angle = Math.atan2(end.y - start.y, end.x - start.x)
     const arrowX = end.x - Math.cos(angle) * (highlighted ? 7 : 5)
     const arrowY = end.y - Math.sin(angle) * (highlighted ? 7 : 5)
     
-    // Add glow for highlighted arrows
     if (highlighted) {
       ctx.shadowBlur = 12
       ctx.shadowColor = 'rgba(34, 211, 238, 0.8)'
@@ -190,17 +172,14 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
     ctx.closePath()
     ctx.fill()
     
-    // Reset shadow
     ctx.shadowBlur = 0
     
-    // Draw relationship label
     if (highlighted || globalScale > 0.5) {
       ctx.globalAlpha = opacity
       ctx.font = `${fontSize}px Sans-Serif`
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       
-      // Background for label
       const labelText = link.label
       const textWidth = ctx.measureText(labelText).width
       ctx.fillStyle = highlighted ? 'rgba(34, 211, 238, 0.95)' : 'rgba(51, 65, 85, 0.9)'
@@ -211,7 +190,6 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
         fontSize + 2
       )
       
-      // Draw text
       ctx.fillStyle = highlighted ? '#0F172A' : '#E2E8F0'
       ctx.fillText(labelText, middleX, middleY)
       ctx.globalAlpha = 1.0
@@ -226,27 +204,23 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
         <div className="flex gap-4 text-xs flex-wrap">
           <span className="flex items-center gap-2 text-slate-300">
             <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-            Drugs ({graphData?.nodes.filter(n => n.type === 'drug').length || 0})
-          </span>
-          <span className="flex items-center gap-2 text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
-            Proteins ({graphData?.nodes.filter(n => n.type === 'protein').length || 0})
-          </span>
-          <span className="flex items-center gap-2 text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-red-500"></span>
-            Diseases ({graphData?.nodes.filter(n => n.type === 'disease').length || 0})
+            💊 Pharma ({graphData?.nodes.filter(n => n.knowledge_source === 'pharma_proprietary').length || 0})
           </span>
           <span className="flex items-center gap-2 text-slate-300">
             <span className="w-3 h-3 rounded-full bg-purple-500"></span>
-            Pathways ({graphData?.nodes.filter(n => n.type === 'pathway').length || 0})
+            🧠 Neuroscience ({graphData?.nodes.filter(n => n.knowledge_source === 'academic_neuroscience').length || 0})
           </span>
           <span className="flex items-center gap-2 text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-pink-500"></span>
-            Biomarkers ({graphData?.nodes.filter(n => n.type === 'biomarker').length || 0})
+            <span className="w-3 h-3 rounded-full bg-red-500"></span>
+            🏥 Clinical ({graphData?.nodes.filter(n => n.knowledge_source === 'clinical_observation').length || 0})
+          </span>
+          <span className="flex items-center gap-2 text-slate-300">
+            <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+            🔬 Biology ({graphData?.nodes.filter(n => n.knowledge_source === 'fundamental_biology').length || 0})
           </span>
           <span className="flex items-center gap-2 text-slate-300">
             <span className="w-3 h-3 rounded-full bg-amber-500"></span>
-            Anatomy ({graphData?.nodes.filter(n => n.type === 'anatomy').length || 0})
+            📚 Public ({graphData?.nodes.filter(n => n.knowledge_source === 'public_databases').length || 0})
           </span>
         </div>
       </div>
@@ -303,7 +277,7 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
           <>
             {graphData.nodes.length} entities • {graphData.links.length} relationships
             <div className="text-xs mt-1 text-slate-500">
-              💡 Tip: Drag nodes to rearrange • Scroll to zoom • Drag background to pan
+              💡 Colors show knowledge sources: Pharma, Neuroscience, Clinical, Biology, Public
             </div>
           </>
         )}

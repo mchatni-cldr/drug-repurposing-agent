@@ -1,186 +1,231 @@
 {
-  "metadata": {
-    "version": "3.1",
-    "created": "2025-01-21",
-    "description": "Knowledge graph demonstrating cross-domain discovery: GLP-1 brain expression links diabetes drug to obesity treatment",
-    "scenario": "Semaglutide approved for diabetes (2017). Brain GLP-1 research existed in neuroscience literature (2008-2015) but wasn't connected to therapeutic development until clinical observation (2018-2019)",
-    "key_insight": "AI discovers hidden connection by bridging pharma and neuroscience knowledge silos"
-  },
   "entities": [
     {
       "id": "DRUG_001",
       "name": "Semaglutide",
       "type": "drug",
-      "status": "approved",
-      "brand_name": "Ozempic",
-      "approval_year": 2017,
       "indication": "Type 2 Diabetes",
-      "knowledge_domain": "pharma_clinical"
-    },
-    {
-      "id": "BIO_007",
-      "name": "Blood Glucose Level",
-      "type": "biomarker",
-      "measures": "glucose_concentration",
-      "knowledge_domain": "clinical_diagnostics"
-    },
-    {
-      "id": "MECH_001",
-      "name": "Glucose-Dependent Insulin Secretion",
-      "type": "mechanism",
-      "function": "conditional_insulin_release",
-      "knowledge_domain": "pharmacology"
+      "approval_year": 2017,
+      "knowledge_source": "pharma_proprietary",
+      "source_organization": "Novo Nordisk",
+      "source_context": "Developed and clinically tested by Novo Nordisk. FDA approved in 2017 for diabetes treatment."
     },
     {
       "id": "DRUG_002",
       "name": "Metformin",
       "type": "drug",
-      "status": "approved",
       "indication": "Type 2 Diabetes",
-      "knowledge_domain": "pharma_clinical"
+      "knowledge_source": "pharma_proprietary",
+      "source_organization": "Generic/Multiple Pharma",
+      "source_context": "Widely used diabetes medication, now generic."
     },
     {
       "id": "PROT_001",
       "name": "GLP-1 Receptor",
       "type": "protein",
-      "class": "GPCR",
-      "full_name": "Glucagon-like peptide-1 receptor",
-      "knowledge_domain": "molecular_biology"
+      "function": "incretin_receptor",
+      "knowledge_source": "fundamental_biology",
+      "source_organization": "NIH/Academic Research",
+      "discovery_year": 1992,
+      "source_context": "G-protein coupled receptor discovered through fundamental biology research. Publicly available knowledge."
     },
     {
       "id": "PROT_002",
       "name": "Insulin",
       "type": "protein",
-      "class": "hormone",
-      "knowledge_domain": "endocrinology"
+      "function": "hormone",
+      "knowledge_source": "fundamental_biology",
+      "source_organization": "Academic Research",
+      "discovery_year": 1921,
+      "source_context": "Hormone discovered by Banting and Best. Fundamental to diabetes treatment."
     },
     {
       "id": "PROT_003",
-      "name": "POMC Neurons",
-      "type": "protein",
-      "full_name": "Pro-opiomelanocortin neurons",
-      "function": "appetite_suppression",
-      "knowledge_domain": "neuroscience"
-    },
-    {
-      "id": "PROT_004",
-      "name": "NPY Neurons",
-      "type": "protein",
-      "full_name": "Neuropeptide Y neurons",
-      "function": "appetite_stimulation",
-      "knowledge_domain": "neuroscience"
-    },
-    {
-      "id": "PROT_005",
       "name": "Leptin",
       "type": "protein",
-      "class": "hormone",
-      "function": "satiety_hormone",
-      "knowledge_domain": "endocrinology"
-    },
-    {
-      "id": "PATH_002",
-      "name": "Central Appetite Regulation",
-      "type": "pathway",
-      "location": "hypothalamus",
-      "function": "food_intake_control",
-      "knowledge_domain": "neuroscience"
-    },
-    {
-      "id": "PATH_003",
-      "name": "Energy Homeostasis",
-      "type": "pathway",
-      "function": "metabolic_balance",
-      "knowledge_domain": "physiology"
+      "function": "hormone",
+      "knowledge_source": "fundamental_biology",
+      "source_organization": "Rockefeller University",
+      "discovery_year": 1994,
+      "source_context": "Satiety hormone discovered in academic research."
     },
     {
       "id": "ANAT_001",
       "name": "Hypothalamus",
       "type": "anatomy",
-      "organ": "brain",
-      "function": "homeostatic_control",
-      "knowledge_domain": "neuroscience"
+      "location": "brain",
+      "knowledge_source": "academic_neuroscience",
+      "source_organization": "UCLA, Yale",
+      "key_publications": "2008-2015",
+      "source_context": "GLP-1R expression in appetite centers discovered by academic neuroscientists but not connected to drug development until 2018-2019."
     },
     {
       "id": "ANAT_002",
       "name": "Arcuate Nucleus",
       "type": "anatomy",
-      "organ": "brain",
       "location": "hypothalamus",
-      "function": "appetite_center",
-      "knowledge_domain": "neuroscience"
+      "knowledge_source": "academic_neuroscience",
+      "source_organization": "Harvard, MIT",
+      "key_publications": "2000s-2010s",
+      "source_context": "Key appetite regulation center studied extensively in neuroscience."
     },
     {
       "id": "ANAT_003",
       "name": "Pancreas",
       "type": "anatomy",
-      "organ": "pancreas",
-      "function": "insulin_secretion",
-      "knowledge_domain": "endocrinology"
+      "location": "abdomen",
+      "knowledge_source": "fundamental_biology",
+      "source_organization": "Medical Schools",
+      "discovery_year": 1869,
+      "source_context": "Insulin-producing organ, fundamental medical knowledge."
     },
     {
       "id": "ANAT_004",
       "name": "Stomach",
       "type": "anatomy",
-      "organ": "GI_tract",
-      "function": "digestion",
-      "knowledge_domain": "gastroenterology"
+      "location": "abdomen",
+      "knowledge_source": "fundamental_biology",
+      "source_organization": "Medical Schools",
+      "source_context": "Digestive organ, site of GLP-1R affecting gastric emptying."
+    },
+    {
+      "id": "CELL_001",
+      "name": "POMC Neurons",
+      "type": "cell",
+      "location": "arcuate_nucleus",
+      "knowledge_source": "academic_neuroscience",
+      "source_organization": "Neuroscience Labs",
+      "key_publications": "2000-2010",
+      "source_context": "Anorexigenic neurons that suppress appetite, discovered through academic neuroscience research."
+    },
+    {
+      "id": "CELL_002",
+      "name": "NPY Neurons",
+      "type": "cell",
+      "location": "arcuate_nucleus",
+      "knowledge_source": "academic_neuroscience",
+      "source_organization": "Neuroscience Labs",
+      "key_publications": "2000-2010",
+      "source_context": "Orexigenic neurons that stimulate appetite."
     },
     {
       "id": "BIO_001",
       "name": "HbA1c",
       "type": "biomarker",
-      "measures": "blood_glucose",
-      "knowledge_domain": "clinical_diagnostics"
+      "measures": "glycemic_control",
+      "knowledge_source": "clinical_observation",
+      "source_organization": "Clinical Labs",
+      "source_context": "Standard diabetes monitoring biomarker used in clinical practice."
     },
     {
       "id": "BIO_002",
       "name": "Body Weight",
       "type": "biomarker",
-      "measures": "mass",
-      "knowledge_domain": "clinical_observation"
+      "measures": "adiposity",
+      "knowledge_source": "clinical_observation",
+      "source_organization": "Hospital Endocrinology",
+      "observation_period": "2015-2017",
+      "source_context": "Diabetes patients on semaglutide showed unexpected weight loss. Reported in clinical case studies but not systematically analyzed until later."
     },
     {
       "id": "BIO_003",
-      "name": "Satiety",
+      "name": "Blood Glucose Level",
       "type": "biomarker",
-      "measures": "fullness",
-      "knowledge_domain": "behavioral_physiology"
+      "measures": "glucose_concentration",
+      "knowledge_source": "clinical_observation",
+      "source_organization": "Clinical Medicine",
+      "source_context": "Standard clinical measurement."
     },
     {
       "id": "BIO_004",
       "name": "Food Intake",
       "type": "biomarker",
       "measures": "caloric_consumption",
-      "knowledge_domain": "behavioral_physiology"
+      "knowledge_source": "clinical_observation",
+      "source_organization": "Nutrition Research",
+      "source_context": "Measured in clinical and research settings."
+    },
+    {
+      "id": "BIO_005",
+      "name": "Satiety",
+      "type": "biomarker",
+      "measures": "fullness",
+      "knowledge_source": "academic_neuroscience",
+      "source_organization": "Behavioral Neuroscience Labs",
+      "source_context": "Studied in academic behavioral neuroscience research."
     },
     {
       "id": "BIO_006",
       "name": "Gastric Emptying Rate",
       "type": "biomarker",
       "measures": "digestion_speed",
-      "knowledge_domain": "gastroenterology"
+      "knowledge_source": "clinical_observation",
+      "source_organization": "Gastroenterology Clinics",
+      "source_context": "Measured in clinical gastroenterology practice."
     },
     {
       "id": "DIS_001",
       "name": "Type 2 Diabetes",
       "type": "disease",
       "category": "metabolic",
-      "knowledge_domain": "clinical_medicine"
+      "knowledge_source": "public_databases",
+      "source_organization": "ICD-10, Medical Literature",
+      "source_context": "Standardized disease classification in public medical databases."
     },
     {
       "id": "DIS_002",
       "name": "Obesity",
       "type": "disease",
       "category": "metabolic",
-      "knowledge_domain": "clinical_medicine"
+      "knowledge_source": "public_databases",
+      "source_organization": "WHO, Medical Literature",
+      "source_context": "Global health concern, standardized classification."
     },
     {
       "id": "DIS_003",
       "name": "Metabolic Syndrome",
       "type": "disease",
       "category": "metabolic",
-      "knowledge_domain": "clinical_medicine"
+      "knowledge_source": "public_databases",
+      "source_organization": "Medical Databases",
+      "source_context": "Cluster of conditions including diabetes and obesity."
+    },
+    {
+      "id": "PATH_001",
+      "name": "Insulin Signaling",
+      "type": "pathway",
+      "function": "glucose_regulation",
+      "knowledge_source": "fundamental_biology",
+      "source_organization": "Decades of Research",
+      "source_context": "Well-established biological pathway from fundamental research."
+    },
+    {
+      "id": "PATH_002",
+      "name": "Central Appetite Regulation",
+      "type": "pathway",
+      "function": "feeding_behavior",
+      "knowledge_source": "academic_neuroscience",
+      "source_organization": "Neuroscience Research",
+      "key_publications": "1990s-2010s",
+      "source_context": "Brain circuits controlling appetite, extensively studied in academic neuroscience."
+    },
+    {
+      "id": "PATH_003",
+      "name": "Energy Homeostasis",
+      "type": "pathway",
+      "function": "metabolic_balance",
+      "knowledge_source": "fundamental_biology",
+      "source_organization": "Metabolism Research",
+      "source_context": "Fundamental principle of energy balance from decades of research."
+    },
+    {
+      "id": "MECH_001",
+      "name": "Glucose-Dependent Insulin Secretion",
+      "type": "mechanism",
+      "function": "conditional_insulin_release",
+      "knowledge_source": "fundamental_biology",
+      "source_organization": "Endocrinology Research",
+      "source_context": "Mechanism ensuring insulin only released when glucose is elevated."
     }
   ],
   "relationships": [
@@ -190,35 +235,8 @@
       "target": "PROT_001",
       "confidence": 0.98,
       "evidence": "primary_mechanism",
-      "note": "Well-established mechanism of action",
-      "hidden_knowledge": false
-    },
-    {
-      "source": "DRUG_001",
-      "relation": "approved_for",
-      "target": "DIS_001",
-      "confidence": 1.0,
-      "evidence": "FDA_approval_2017",
-      "note": "FDA approved December 2017",
-      "hidden_knowledge": false
-    },
-    {
-      "source": "PROT_001",
-      "relation": "stimulates",
-      "target": "PROT_002",
-      "confidence": 0.95,
-      "evidence": "pancreatic_mechanism",
-      "note": "Well-known: GLP-1R stimulates insulin secretion",
-      "hidden_knowledge": false
-    },
-    {
-      "source": "PROT_001",
-      "relation": "expressed_in",
-      "target": "ANAT_003",
-      "confidence": 0.96,
-      "evidence": "tissue_expression",
-      "note": "Well-known: GLP-1R highly expressed in pancreatic beta cells",
-      "hidden_knowledge": false
+      "hidden_knowledge": false,
+      "note": "Well-established mechanism of action"
     },
     {
       "source": "PROT_001",
@@ -226,29 +244,27 @@
       "target": "ANAT_001",
       "confidence": 0.89,
       "evidence": "brain_expression",
-      "note": "KEY HIDDEN CONNECTION: GLP-1R in hypothalamus published in neuroscience literature (2008-2015) but not widely known in pharma until 2018-2019",
-      "domain": "neuroscience",
-      "discovery_gap_years": 3,
-      "hidden_knowledge": true
+      "hidden_knowledge": true,
+      "knowledge_domain": "academic_neuroscience",
+      "note": "KEY HIDDEN CONNECTION: GLP-1R in hypothalamus published in neuroscience literature (UCLA, Yale 2008-2015) but not widely known in pharma until 2018-2019"
     },
     {
       "source": "PROT_001",
       "relation": "expressed_in",
-      "target": "ANAT_002",
-      "confidence": 0.87,
-      "evidence": "neuroanatomy",
-      "note": "HIDDEN: Arcuate nucleus GLP-1R controls appetite. Known in neuroscience, not connected to semaglutide's therapeutic potential",
-      "domain": "neuroscience",
-      "hidden_knowledge": true
+      "target": "ANAT_003",
+      "confidence": 0.95,
+      "evidence": "pancreatic_expression",
+      "hidden_knowledge": false,
+      "note": "Well-known pancreatic expression"
     },
     {
       "source": "PROT_001",
       "relation": "expressed_in",
       "target": "ANAT_004",
-      "confidence": 0.92,
-      "evidence": "GI_expression",
-      "note": "Known: GLP-1R in GI tract causes nausea, delays gastric emptying",
-      "hidden_knowledge": false
+      "confidence": 0.87,
+      "evidence": "gastric_expression",
+      "hidden_knowledge": false,
+      "note": "GLP-1R in stomach affects gastric emptying"
     },
     {
       "source": "ANAT_001",
@@ -256,132 +272,26 @@
       "target": "ANAT_002",
       "confidence": 0.99,
       "evidence": "neuroanatomy",
-      "note": "Basic neuroanatomy",
-      "hidden_knowledge": false
+      "hidden_knowledge": false,
+      "note": "Basic neuroanatomy"
     },
     {
       "source": "ANAT_002",
       "relation": "contains",
-      "target": "PROT_003",
-      "confidence": 0.94,
-      "evidence": "neuron_location",
-      "note": "Neuroscience knowledge: POMC neurons in arcuate nucleus suppress appetite",
-      "domain": "neuroscience",
-      "hidden_knowledge": true
+      "target": "CELL_001",
+      "confidence": 0.96,
+      "evidence": "cellular_composition",
+      "hidden_knowledge": false,
+      "note": "POMC neurons in arcuate nucleus"
     },
     {
       "source": "ANAT_002",
       "relation": "contains",
-      "target": "PROT_004",
-      "confidence": 0.93,
-      "evidence": "neuron_location",
-      "note": "Neuroscience knowledge: NPY neurons in arcuate nucleus stimulate appetite",
-      "domain": "neuroscience",
-      "hidden_knowledge": true
-    },
-    {
-      "source": "PROT_001",
-      "relation": "activates",
-      "target": "PROT_003",
-      "confidence": 0.86,
-      "evidence": "neuronal_signaling",
-      "note": "HIDDEN MECHANISM: GLP-1R activation of POMC neurons suppresses appetite. Published in Cell Metabolism (2014) but not connected to drug development",
-      "domain": "neuroscience",
-      "hidden_knowledge": true
-    },
-    {
-      "source": "PROT_001",
-      "relation": "inhibits",
-      "target": "PROT_004",
-      "confidence": 0.84,
-      "evidence": "neuronal_signaling",
-      "note": "Neuroscience: GLP-1R inhibits hunger-promoting NPY neurons",
-      "domain": "neuroscience",
-      "hidden_knowledge": true
-    },
-    {
-      "source": "PROT_003",
-      "relation": "promotes",
-      "target": "BIO_003",
-      "confidence": 0.91,
-      "evidence": "appetite_biology",
-      "note": "POMC neurons promote satiety/fullness",
-      "domain": "neuroscience",
-      "hidden_knowledge": true
-    },
-    {
-      "source": "PROT_004",
-      "relation": "suppresses",
-      "target": "BIO_003",
-      "confidence": 0.88,
-      "evidence": "appetite_biology",
-      "note": "NPY neurons suppress satiety (promote hunger)",
-      "domain": "neuroscience",
-      "hidden_knowledge": true
-    },
-    {
-      "source": "PROT_005",
-      "relation": "regulates",
-      "target": "PROT_003",
-      "confidence": 0.85,
-      "evidence": "leptin_pathway",
-      "note": "Leptin-POMC pathway known in obesity research",
-      "domain": "neuroscience",
-      "hidden_knowledge": false
-    },
-    {
-      "source": "BIO_003",
-      "relation": "reduces",
-      "target": "BIO_004",
-      "confidence": 0.93,
-      "evidence": "behavioral_outcome",
-      "note": "Basic physiology: satiety reduces food intake",
-      "hidden_knowledge": false
-    },
-    {
-      "source": "BIO_004",
-      "relation": "affects",
-      "target": "PATH_003",
-      "confidence": 0.90,
-      "evidence": "energy_balance",
-      "note": "Food intake affects energy homeostasis",
-      "hidden_knowledge": false
-    },
-    {
-      "source": "PATH_003",
-      "relation": "determines",
-      "target": "BIO_002",
-      "confidence": 0.88,
-      "evidence": "thermodynamics",
-      "note": "Energy balance determines body weight",
-      "hidden_knowledge": false
-    },
-    {
-      "source": "BIO_002",
-      "relation": "diagnostic_for",
-      "target": "DIS_002",
-      "confidence": 0.97,
-      "evidence": "clinical_criteria",
-      "note": "Body weight is diagnostic criteria for obesity",
-      "hidden_knowledge": false
-    },
-    {
-      "source": "PROT_001",
-      "relation": "slows",
-      "target": "BIO_006",
-      "confidence": 0.90,
-      "evidence": "GI_physiology",
-      "note": "Known GI effect: slowed gastric emptying",
-      "hidden_knowledge": false
-    },
-    {
-      "source": "BIO_006",
-      "relation": "enhances",
-      "target": "BIO_003",
-      "confidence": 0.82,
-      "evidence": "peripheral_satiety",
-      "note": "Delayed gastric emptying increases fullness",
-      "hidden_knowledge": false
+      "target": "CELL_002",
+      "confidence": 0.96,
+      "evidence": "cellular_composition",
+      "hidden_knowledge": false,
+      "note": "NPY neurons in arcuate nucleus"
     },
     {
       "source": "ANAT_002",
@@ -389,9 +299,45 @@
       "target": "PATH_002",
       "confidence": 0.95,
       "evidence": "functional_role",
-      "note": "Neuroscience: Arcuate nucleus is key appetite regulation center",
-      "domain": "neuroscience",
-      "hidden_knowledge": true
+      "hidden_knowledge": true,
+      "knowledge_domain": "academic_neuroscience",
+      "note": "HIDDEN CONNECTION: Arcuate nucleus is key appetite regulation center (neuroscience research 2000s-2010s)"
+    },
+    {
+      "source": "CELL_001",
+      "relation": "suppresses",
+      "target": "BIO_004",
+      "confidence": 0.91,
+      "evidence": "neuroscience_research",
+      "hidden_knowledge": false,
+      "note": "POMC neurons decrease appetite"
+    },
+    {
+      "source": "CELL_002",
+      "relation": "enhances",
+      "target": "BIO_004",
+      "confidence": 0.92,
+      "evidence": "neuroscience_research",
+      "hidden_knowledge": false,
+      "note": "NPY neurons increase appetite"
+    },
+    {
+      "source": "PROT_003",
+      "relation": "regulates",
+      "target": "CELL_001",
+      "confidence": 0.88,
+      "evidence": "hormonal_regulation",
+      "hidden_knowledge": false,
+      "note": "Leptin activates POMC neurons"
+    },
+    {
+      "source": "PROT_003",
+      "relation": "inhibits",
+      "target": "CELL_002",
+      "confidence": 0.88,
+      "evidence": "hormonal_regulation",
+      "hidden_knowledge": false,
+      "note": "Leptin inhibits NPY neurons"
     },
     {
       "source": "PATH_002",
@@ -399,47 +345,149 @@
       "target": "BIO_004",
       "confidence": 0.92,
       "evidence": "neuroendocrine",
-      "note": "Neuroscience: Central appetite pathways control food intake",
-      "domain": "neuroscience",
-      "hidden_knowledge": true
+      "hidden_knowledge": true,
+      "knowledge_domain": "academic_neuroscience",
+      "note": "HIDDEN CONNECTION: Central appetite pathways control food intake (neuroscience research)"
     },
     {
-      "source": "DIS_001",
-      "relation": "component_of",
-      "target": "DIS_003",
-      "confidence": 0.90,
-      "evidence": "diagnostic_criteria",
-      "hidden_knowledge": false
+      "source": "BIO_004",
+      "relation": "affects",
+      "target": "PATH_003",
+      "confidence": 0.9,
+      "evidence": "energy_balance",
+      "hidden_knowledge": false,
+      "note": "Food intake affects energy homeostasis"
     },
     {
-      "source": "DIS_002",
-      "relation": "component_of",
-      "target": "DIS_003",
-      "confidence": 0.92,
-      "evidence": "diagnostic_criteria",
-      "hidden_knowledge": false
+      "source": "PATH_003",
+      "relation": "determines",
+      "target": "BIO_002",
+      "confidence": 0.88,
+      "evidence": "thermodynamics",
+      "hidden_knowledge": false,
+      "note": "Energy balance determines body weight"
+    },
+    {
+      "source": "BIO_002",
+      "relation": "diagnostic_for",
+      "target": "DIS_002",
+      "confidence": 0.97,
+      "evidence": "clinical_criteria",
+      "hidden_knowledge": false,
+      "note": "Body weight is diagnostic criteria for obesity"
+    },
+    {
+      "source": "ANAT_004",
+      "relation": "slows",
+      "target": "BIO_006",
+      "confidence": 0.89,
+      "evidence": "gastric_mechanism",
+      "hidden_knowledge": false,
+      "note": "GLP-1 activation slows gastric emptying"
+    },
+    {
+      "source": "BIO_006",
+      "relation": "induces",
+      "target": "BIO_005",
+      "confidence": 0.87,
+      "evidence": "physiological_effect",
+      "hidden_knowledge": false,
+      "note": "Delayed gastric emptying increases satiety"
+    },
+    {
+      "source": "BIO_005",
+      "relation": "reduces",
+      "target": "BIO_004",
+      "confidence": 0.9,
+      "evidence": "behavioral_effect",
+      "hidden_knowledge": false,
+      "note": "Satiety reduces food intake"
+    },
+    {
+      "source": "DRUG_001",
+      "relation": "approved_for",
+      "target": "DIS_001",
+      "confidence": 1.0,
+      "evidence": "fda_approval",
+      "hidden_knowledge": false,
+      "note": "FDA approved 2017"
     },
     {
       "source": "DRUG_002",
       "relation": "approved_for",
       "target": "DIS_001",
       "confidence": 1.0,
-      "evidence": "FDA_approval",
-      "hidden_knowledge": false
+      "evidence": "fda_approval",
+      "hidden_knowledge": false,
+      "note": "Standard diabetes treatment"
     },
     {
-      "source": "DRUG_001",
-      "relation": "reduces",
+      "source": "DIS_001",
+      "relation": "component_of",
+      "target": "DIS_003",
+      "confidence": 0.92,
+      "evidence": "clinical_association",
+      "hidden_knowledge": false,
+      "note": "Diabetes is part of metabolic syndrome"
+    },
+    {
+      "source": "DIS_002",
+      "relation": "component_of",
+      "target": "DIS_003",
+      "confidence": 0.93,
+      "evidence": "clinical_association",
+      "hidden_knowledge": false,
+      "note": "Obesity is part of metabolic syndrome"
+    },
+    {
+      "source": "PROT_001",
+      "relation": "stimulates",
+      "target": "PROT_002",
+      "confidence": 0.94,
+      "evidence": "incretin_effect",
+      "hidden_knowledge": false,
+      "note": "GLP-1 stimulates insulin secretion"
+    },
+    {
+      "source": "ANAT_003",
+      "relation": "secretes",
+      "target": "PROT_002",
+      "confidence": 0.98,
+      "evidence": "physiological_function",
+      "hidden_knowledge": false,
+      "note": "Pancreas produces insulin"
+    },
+    {
+      "source": "PROT_002",
+      "relation": "regulates",
+      "target": "BIO_003",
+      "confidence": 0.97,
+      "evidence": "hormonal_regulation",
+      "hidden_knowledge": false,
+      "note": "Insulin lowers blood glucose"
+    },
+    {
+      "source": "BIO_003",
+      "relation": "measured_by",
       "target": "BIO_001",
-      "confidence": 0.96,
-      "evidence": "SUSTAIN_trials",
-      "note": "Primary endpoint in diabetes trials",
-      "hidden_knowledge": false
+      "confidence": 0.95,
+      "evidence": "clinical_measurement",
+      "hidden_knowledge": false,
+      "note": "HbA1c measures long-term glucose control"
+    },
+    {
+      "source": "BIO_001",
+      "relation": "diagnostic_for",
+      "target": "DIS_001",
+      "confidence": 0.98,
+      "evidence": "clinical_criteria",
+      "hidden_knowledge": false,
+      "note": "HbA1c is diabetes diagnostic"
     },
     {
       "source": "PROT_001",
       "relation": "activates_only_when_elevated",
-      "target": "BIO_007",
+      "target": "BIO_003",
       "confidence": 0.97,
       "evidence": "glucose_dependence",
       "note": "KEY SAFETY: GLP-1R only stimulates insulin when blood glucose is HIGH. No effect when glucose is normal.",
@@ -447,7 +495,7 @@
       "hidden_knowledge": false
     },
     {
-      "source": "BIO_007",
+      "source": "BIO_003",
       "relation": "gates",
       "target": "MECH_001",
       "confidence": 0.98,
@@ -466,7 +514,7 @@
     {
       "source": "PROT_001",
       "relation": "operates_independently_of",
-      "target": "BIO_007",
+      "target": "BIO_003",
       "confidence": 0.92,
       "evidence": "brain_mechanism",
       "note": "CRITICAL: Brain appetite effects (hypothalamus) work regardless of glucose levels. Weight loss mechanism is glucose-independent.",

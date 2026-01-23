@@ -77,7 +77,6 @@ def extract_triplets_with_claude(text: str) -> list:
     
     return triplets
 
-
 @app.route('/api/hello', methods=['GET'])
 def hello():
     """Test endpoint"""
@@ -104,7 +103,8 @@ def get_graph_data():
             'id': entity['id'],
             'name': entity['name'],
             'type': entity['type'],
-            'group': entity['type']
+            'group': entity['type'],
+            'knowledge_source': entity.get('knowledge_source', 'unknown')
         }
         for entity in SEED_GRAPH['entities']
     ]
@@ -256,6 +256,7 @@ def generate_discovery_stream(question: str):
             'clinical_significance': agent_insights.get('clinical_significance'),
             'mechanism_explanation': agent_insights.get('mechanism_explanation'),
             'safety_rationale': agent_insights.get('safety_rationale'),
+            'knowledge_fragmentation': agent_insights.get('knowledge_fragmentation'),
             'confidence_assessment': agent_insights.get('confidence_assessment'),
             'hidden_knowledge_insight': agent_insights.get('hidden_knowledge_insight'),
             'key_risks': agent_insights.get('key_risks'),
@@ -385,6 +386,7 @@ def discover():
             'clinical_significance': agent_insights.get('clinical_significance'),
             'mechanism_explanation': agent_insights.get('mechanism_explanation'),
             'safety_rationale': agent_insights.get('safety_rationale'),
+            'knowledge_fragmentation': agent_insights.get('knowledge_fragmentation'),
             'confidence_assessment': agent_insights.get('confidence_assessment'),
             'hidden_knowledge_insight': agent_insights.get('hidden_knowledge_insight'),
             'key_risks': agent_insights.get('key_risks'),

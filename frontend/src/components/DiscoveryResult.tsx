@@ -12,6 +12,7 @@ interface DiscoveryResultProps {
     confidence_assessment?: string
     hidden_knowledge_insight?: string
     safety_rationale?: string
+    knowledge_fragmentation?: string
     key_risks?: string
     next_steps?: string[]
     top_path: {
@@ -105,6 +106,17 @@ export function DiscoveryResult({ result, onClose }: DiscoveryResultProps) {
               Safety Profile
             </h3>
             <p className="text-emerald-100 leading-relaxed">{result.safety_rationale}</p>
+          </div>
+        )}
+
+        {/* Knowledge Fragmentation - NEW */}
+        {result.knowledge_fragmentation && (
+          <div className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 rounded-2xl p-6 border border-indigo-400/20">
+            <h3 className="text-sm font-semibold text-indigo-300 uppercase tracking-wide mb-3 flex items-center gap-2">
+              <span>🧩</span>
+              Knowledge Silos Bridged
+            </h3>
+            <p className="text-indigo-100 leading-relaxed">{result.knowledge_fragmentation}</p>
           </div>
         )}
 

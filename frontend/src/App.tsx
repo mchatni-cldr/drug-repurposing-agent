@@ -24,6 +24,7 @@ interface DiscoveryResponse {
   confidence_assessment?: string
   hidden_knowledge_insight?: string
   safety_rationale?: string
+  knowledge_fragmentation?: string
   key_risks?: string
   next_steps?: string[]
   top_path: {
