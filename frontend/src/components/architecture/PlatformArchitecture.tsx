@@ -51,7 +51,7 @@ export function PlatformArchitecture() {
     <div className="container mx-auto px-6 pb-16">
       {/* Title */}
       <header className="text-center mb-12">
-        <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
           Cloudera Platform Architecture
         </h1>
         <p className="text-xl text-gray-300">
