@@ -29,7 +29,7 @@ export function PlatformStats({ phase }: PlatformStatsProps) {
 
       <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 text-center">
         <div className="text-3xl font-bold text-purple-400 mb-1">
-          {phase >= 2 ? '10,247' : '23'}
+          {phase >= 2 ? '10,247' : '0'}
         </div>
         <div className="text-xs text-gray-400">Graph Entities</div>
         {phase >= 2 && (
@@ -39,7 +39,7 @@ export function PlatformStats({ phase }: PlatformStatsProps) {
 
       <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 text-center">
         <div className="text-3xl font-bold text-cyan-400 mb-1">
-          {phase >= 2 ? '45,893' : '31'}
+          {phase >= 2 ? '45,893' : '0'}
         </div>
         <div className="text-xs text-gray-400">Relationships</div>
         {phase >= 2 && (
@@ -49,11 +49,11 @@ export function PlatformStats({ phase }: PlatformStatsProps) {
 
       <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 text-center">
         <div className="text-3xl font-bold text-amber-400 mb-1">
-          {phase >= 3 ? '3s' : '—'}
+          {phase >= 3 ? 'hours' : '—'}
         </div>
         <div className="text-xs text-gray-400">Discovery Time</div>
         {phase >= 3 && (
-          <div className="mt-2 text-[10px] text-amber-300/60">vs 4 years</div>
+          <div className="mt-2 text-[10px] text-amber-300/60">vs 2 years</div>
         )}
       </div>
     </div>

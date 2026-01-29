@@ -72,13 +72,13 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
 
   const getNodeColor = (node: Node) => {
     const sourceColors: Record<string, string> = {
-      pharma_proprietary: '#3B82F6',      // Blue - Pharma
-      fundamental_biology: '#10B981',     // Green - Biology
-      academic_neuroscience: '#8B5CF6',   // Purple - Neuroscience
-      clinical_observation: '#EF4444',    // Red - Clinical
-      public_databases: '#F59E0B'         // Amber - Public
+      pharma_proprietary: '#FF6900',
+      academic_neuroscience: '#0073E6',
+      clinical_observation: '#FF4444',
+      fundamental_biology: '#00A3A3',
+      public_databases: '#00B8E6'
     }
-    return sourceColors[node.knowledge_source || ''] || '#6B7280'
+    return sourceColors[node.knowledge_source || ''] || '#6B7280' 
   }
 
   const isNodeHighlighted = (nodeId: string) => {
@@ -102,11 +102,11 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
     
     if (highlighted) {
       ctx.shadowBlur = 25
-      ctx.shadowColor = 'rgba(34, 211, 238, 0.8)'
+      ctx.shadowColor = 'rgba(255, 105, 0, 0.8)'
     }
     
     ctx.globalAlpha = opacity
-    ctx.fillStyle = highlighted ? '#22D3EE' : getNodeColor(node)
+    ctx.fillStyle = highlighted ? '#FF6900' : getNodeColor(node)
     ctx.beginPath()
     ctx.arc(node.x, node.y, nodeSize, 0, 2 * Math.PI, false)
     ctx.fill()
@@ -118,7 +118,7 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
     ctx.font = `${fontSize}px Sans-Serif`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillStyle = highlighted ? '#22D3EE' : '#E2E8F0'
+    ctx.fillStyle = highlighted ? '#FF6900' : '#1F2937'
     ctx.fontWeight = highlighted ? 'bold' : 'normal'
     ctx.fillText(label, node.x, node.y + nodeSize + fontSize)
     ctx.globalAlpha = 1.0
@@ -139,7 +139,7 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
     const middleY = (start.y + end.y) / 2
     
     ctx.globalAlpha = opacity
-    ctx.strokeStyle = highlighted ? '#22D3EE' : '#94A3B8'
+    ctx.strokeStyle = highlighted ? '#FF6900' : '#9CA3AF'
     ctx.lineWidth = highlighted ? 4 / globalScale : 1 / globalScale
     ctx.beginPath()
     ctx.moveTo(start.x, start.y)
@@ -155,10 +155,10 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
     
     if (highlighted) {
       ctx.shadowBlur = 12
-      ctx.shadowColor = 'rgba(34, 211, 238, 0.8)'
+      ctx.shadowColor = 'rgba(255, 105, 0, 0.8)'
     }
     
-    ctx.fillStyle = highlighted ? '#22D3EE' : (highlightedPath && !highlighted ? 'rgba(148, 163, 184, 0.2)' : '#94A3B8')
+    ctx.fillStyle = highlighted ? '#FF6900' : (highlightedPath && !highlighted ? 'rgba(156, 163, 175, 0.2)' : '#9CA3AF')
     ctx.beginPath()
     ctx.moveTo(arrowX, arrowY)
     ctx.lineTo(
@@ -182,7 +182,7 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
       
       const labelText = link.label
       const textWidth = ctx.measureText(labelText).width
-      ctx.fillStyle = highlighted ? 'rgba(34, 211, 238, 0.95)' : 'rgba(51, 65, 85, 0.9)'
+      ctx.fillStyle = highlighted ? 'rgba(255, 105, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)'
       ctx.fillRect(
         middleX - textWidth / 2 - 2,
         middleY - fontSize / 2 - 1,
@@ -190,7 +190,7 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
         fontSize + 2
       )
       
-      ctx.fillStyle = highlighted ? '#0F172A' : '#E2E8F0'
+      ctx.fillStyle = highlighted ? '#FFFFFF' : '#374151'
       ctx.fillText(labelText, middleX, middleY)
       ctx.globalAlpha = 1.0
     }
@@ -198,34 +198,32 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
 
   return (
     <div>
-      {/* Header */}
-      <div className="p-4 border-b border-white/10 bg-white/5">
-        <h2 className="text-lg font-semibold text-white mb-3">Knowledge Graph</h2>
+      <div className="p-4 border-b border-gray-200 bg-gray-50">
+        <h2 className="text-lg font-semibold text-gray-800 mb-3">Knowledge Graph</h2>
         <div className="flex gap-4 text-xs flex-wrap">
-          <span className="flex items-center gap-2 text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+          <span className="flex items-center gap-2 text-gray-600">
+            <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#FF6900' }}></span>
             💊 Pharma ({graphData?.nodes.filter(n => n.knowledge_source === 'pharma_proprietary').length || 0})
           </span>
-          <span className="flex items-center gap-2 text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-purple-500"></span>
-            🧠 Neuroscience ({graphData?.nodes.filter(n => n.knowledge_source === 'academic_neuroscience').length || 0})
+          <span className="flex items-center gap-2 text-gray-600">
+            <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#0073E6' }}></span>
+            🧠 Academic ({graphData?.nodes.filter(n => n.knowledge_source === 'academic_neuroscience').length || 0})
           </span>
-          <span className="flex items-center gap-2 text-slate-300">
+          <span className="flex items-center gap-2 text-gray-600">
             <span className="w-3 h-3 rounded-full bg-red-500"></span>
             🏥 Clinical ({graphData?.nodes.filter(n => n.knowledge_source === 'clinical_observation').length || 0})
           </span>
-          <span className="flex items-center gap-2 text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <span className="flex items-center gap-2 text-gray-600">
+            <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#00A3A3' }}></span>
             🔬 Biology ({graphData?.nodes.filter(n => n.knowledge_source === 'fundamental_biology').length || 0})
           </span>
-          <span className="flex items-center gap-2 text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-amber-500"></span>
+          <span className="flex items-center gap-2 text-gray-600">
+            <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#00B8E6' }}></span>
             📚 Public ({graphData?.nodes.filter(n => n.knowledge_source === 'public_databases').length || 0})
           </span>
         </div>
       </div>
 
-      {/* Graph Container */}
       <div 
         ref={containerRef}
         className="overflow-hidden"
@@ -233,19 +231,19 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
           height: '600px',
           width: '100%',
           position: 'relative',
-          background: 'linear-gradient(180deg, rgba(51, 65, 85, 0.4) 0%, rgba(30, 41, 59, 0.6) 100%)'
+          background: 'linear-gradient(180deg, #F9FAFB 0%, #F3F4F6 100%)'
         }}
       >
         {loading && (
           <div className="flex items-center justify-center h-full">
-            <div className="text-slate-300">Loading knowledge graph...</div>
+            <div className="text-gray-600">Loading knowledge graph...</div>
           </div>
         )}
         
         {error && (
           <div className="flex items-center justify-center h-full p-4">
-            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-              <p className="text-red-300">Error: {error}</p>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-red-700">Error: {error}</p>
             </div>
           </div>
         )}
@@ -271,13 +269,12 @@ export function GraphVisualization({ highlightedPath }: GraphVisualizationProps)
         )}
       </div>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-white/10 text-xs text-slate-400 text-center bg-white/5">
+      <div className="p-4 border-t border-gray-200 text-xs text-gray-600 text-center bg-gray-50">
         {graphData && (
           <>
             {graphData.nodes.length} entities • {graphData.links.length} relationships
-            <div className="text-xs mt-1 text-slate-500">
-              💡 Colors show knowledge sources: Pharma, Neuroscience, Clinical, Biology, Public
+            <div className="text-xs mt-1 text-gray-500">
+              💡 Colors show knowledge sources across organizational silos
             </div>
           </>
         )}

@@ -42,7 +42,7 @@ interface DiscoveryResponse {
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'discovery' | 'architecture'>('discovery')
+  const [activeTab, setActiveTab] = useState<'discovery' | 'architecture'>('architecture') // CHANGED: Default to 'architecture'
   const [discovering, setDiscovering] = useState(false)
   const [discoveryResult, setDiscoveryResult] = useState<DiscoveryResponse | null>(null)
   const [activitySteps, setActivitySteps] = useState<ActivityStep[]>([])
@@ -115,61 +115,76 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0A0E27] via-[#1A1F3A] to-[#0A0E27]">
-      {/* Subtle animated gradient overlay */}
-      <div className="fixed inset-0 opacity-30">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-cyan-600/10"></div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      {/* Subtle pattern overlay */}
+      <div className="fixed inset-0 opacity-[0.03]">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, rgb(0,0,0) 1px, transparent 0)',
+          backgroundSize: '40px 40px'
+        }}></div>
       </div>
       
       <div className="relative">
-        {/* Tab Navigation */}
+        {/* Tab Navigation - SWAPPED ORDER */}
         <div className="container mx-auto px-6 pt-8">
           <div className="flex justify-center gap-4 mb-8">
             <button
-              onClick={() => setActiveTab('discovery')}
-              className={`
-                px-8 py-4 rounded-2xl font-semibold transition-all text-base
-                ${activeTab === 'discovery' 
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/30 scale-105' 
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-300'
-                }
-              `}
-            >
-              <span className="mr-2">🔬</span>
-              Discovery Demo
-            </button>
-            <button
               onClick={() => setActiveTab('architecture')}
               className={`
-                px-8 py-4 rounded-2xl font-semibold transition-all text-base
+                px-8 py-4 rounded-xl font-semibold transition-all text-base shadow-md
                 ${activeTab === 'architecture' 
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/30 scale-105' 
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-300'
+                  ? 'bg-cloudera-orange text-white shadow-cloudera-orange/30 scale-105' 
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
                 }
               `}
             >
               <span className="mr-2">🏗️</span>
               Platform Architecture
             </button>
+            <button
+              onClick={() => setActiveTab('discovery')}
+              className={`
+                px-8 py-4 rounded-xl font-semibold transition-all text-base shadow-md
+                ${activeTab === 'discovery' 
+                  ? 'bg-cloudera-orange text-white shadow-cloudera-orange/30 scale-105' 
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                }
+              `}
+            >
+              <span className="mr-2">🔬</span>
+              Discovery Demo
+            </button>
           </div>
         </div>
         
-        {/* Tab Content */}
-        {activeTab === 'discovery' ? (
+        {/* Tab Content - SWAPPED ORDER */}
+        {activeTab === 'architecture' ? (
+          <PlatformArchitecture />
+        ) : (
           <div className="container mx-auto px-6 pb-8">
-            {/* Header - FIXED SIZE */}
-            <header className="text-center mb-16">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Drug Repurposing Discovery
-              </h1>
-              <p className="text-lg text-gray-300">
-                AI-Powered Knowledge Graph for Pharmaceutical R&D
-              </p>
+            {/* Header - FIXED WITH EXPLICIT SPACING */}
+            <header className="text-center mb-12 px-4">
+              <div className="py-8">
+                <h1 
+                  className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 bg-gradient-to-r from-cloudera-orange via-cloudera-blue to-cloudera-navy bg-clip-text text-transparent"
+                  style={{ 
+                    lineHeight: '1.3',
+                    paddingTop: '0.5rem',
+                    paddingBottom: '0.5rem',
+                    minHeight: '4rem'
+                  }}
+                >
+                  Drug Repurposing Discovery
+                </h1>
+                <p className="text-lg md:text-xl text-gray-600">
+                  AI-Powered Knowledge Graph for Pharmaceutical R&D
+                </p>
+              </div>
             </header>
 
-            {/* Graph - Glowing Card */}
+            {/* Graph - Card with Shadow */}
             <div className="max-w-7xl mx-auto mb-12">
-              <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 shadow-[0_8px_32px_rgba(99,102,241,0.15)] overflow-hidden">
+              <div className="bg-white rounded-2xl border-2 border-cloudera-orange/20 shadow-xl overflow-hidden">
                 <GraphVisualization 
                   highlightedPath={discoveryResult ? {
                     nodeIds: discoveryResult.top_path.node_ids,
@@ -179,9 +194,9 @@ function App() {
               </div>
             </div>
 
-            {/* Discovery Question - Glowing Card */}
+            {/* Discovery Question - Card */}
             <div className="max-w-4xl mx-auto mb-12">
-              <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 shadow-[0_8px_32px_rgba(99,102,241,0.15)]">
+              <div className="bg-white rounded-2xl border-2 border-cloudera-blue/20 shadow-lg">
                 <DiscoveryQuestion 
                   onDiscover={handleDiscover}
                   isLoading={discovering}
@@ -189,10 +204,10 @@ function App() {
               </div>
             </div>
 
-            {/* Activity Feed - Glowing Card */}
+            {/* Activity Feed - Card */}
             {(activitySteps.length > 0 || discovering) && (
               <div className="max-w-4xl mx-auto mb-12">
-                <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 shadow-[0_8px_32px_rgba(99,102,241,0.15)]">
+                <div className="bg-white rounded-2xl border-2 border-cloudera-lightblue/20 shadow-lg">
                   <ActivityFeed 
                     steps={activitySteps}
                     isActive={discovering}
@@ -201,10 +216,10 @@ function App() {
               </div>
             )}
 
-            {/* Discovery Result - Glowing Card */}
+            {/* Discovery Result - Card */}
             {discoveryResult && (
               <div className="max-w-4xl mx-auto mb-12">
-                <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 shadow-[0_8px_32px_rgba(99,102,241,0.15)]">
+                <div className="bg-white rounded-2xl border-2 border-cloudera-orange/20 shadow-lg">
                   <DiscoveryResult 
                     result={discoveryResult}
                     onClose={handleCloseResult}
@@ -214,17 +229,15 @@ function App() {
             )}
 
             {/* Footer */}
-            <footer className="mt-24 pt-12 border-t border-white/5 text-center">
-              <p className="text-base text-gray-300 mb-2">
-                Powered by <span className="text-cyan-400 font-semibold">Cloudera Machine Learning</span>
+            <footer className="mt-24 pt-12 border-t border-gray-200 text-center">
+              <p className="text-base text-gray-700 mb-2">
+                Powered by <span className="text-cloudera-orange font-semibold">Cloudera Machine Learning</span>
               </p>
               <p className="text-sm text-gray-500">
                 AI Agents • Knowledge Graphs • Claude API
               </p>
             </footer>
           </div>
-        ) : (
-          <PlatformArchitecture />
         )}
       </div>
     </div>

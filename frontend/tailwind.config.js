@@ -6,6 +6,15 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        cloudera: {
+          orange: '#FF6900',
+          navy: '#002F6C',
+          blue: '#0073E6',
+          lightblue: '#00B8E6',
+          teal: '#00A3A3',
+        }
+      },
       animation: {
         fadeIn: 'fadeIn 0.5s ease-in forwards',
         flow: 'flow 3s ease-in-out infinite',
@@ -20,7 +29,7 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        fadeInPlace: {  // NEW - no position shift
+        fadeInPlace: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },

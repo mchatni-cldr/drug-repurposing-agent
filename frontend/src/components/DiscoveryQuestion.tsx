@@ -5,14 +5,14 @@ interface DiscoveryQuestionProps {
   isLoading: boolean
 }
 
+const EXAMPLE_QUESTIONS = [
+  "Could semaglutide treat obesity?",
+  "What drugs might help with Alzheimer's disease?",
+  "Are there connections between metformin and longevity?"
+]
+
 export function DiscoveryQuestion({ onDiscover, isLoading }: DiscoveryQuestionProps) {
   const [question, setQuestion] = useState('')
-
-  const exampleQuestions = [
-    "Could semaglutide treat obesity?",
-    "Find repurposing opportunities for GLP-1 agonists",
-    "What diseases could benefit from GLP-1 receptor modulation?"
-  ]
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -21,66 +21,65 @@ export function DiscoveryQuestion({ onDiscover, isLoading }: DiscoveryQuestionPr
     }
   }
 
-  const handleExampleClick = (example: string) => {
-    if (!isLoading) {
-      setQuestion(example)
-      onDiscover(example)
-    }
+  const handleExampleClick = (exampleQuestion: string) => {
+    setQuestion(exampleQuestion)
   }
 
   return (
-    <div className="p-8">
-      <h2 className="text-2xl font-semibold text-white mb-6">
-        Discovery Query
-      </h2>
-      
-      <form onSubmit={handleSubmit} className="space-y-5">
+    <div className="p-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-2">Discovery Question</h2>
+      <p className="text-gray-600 mb-6">
+        Ask a drug repurposing question and let AI agents explore the knowledge graph
+      </p>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <input
-            type="text"
+          <textarea
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Ask about drug repurposing opportunities..."
+            placeholder="e.g., Could semaglutide treat obesity?"
+            className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-cloudera-orange focus:ring-2 focus:ring-cloudera-orange/20 outline-none transition-all resize-none text-gray-800 placeholder-gray-400"
+            rows={3}
             disabled={isLoading}
-            className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-400 focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 disabled:opacity-50 transition-all text-base"
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={isLoading || !question.trim()}
-          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-2xl font-medium hover:from-blue-400 hover:to-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/25 text-base flex items-center gap-3"
-        >
-          {isLoading ? (
-            <>
-              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-              Discovering...
-            </>
-          ) : (
-            <>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              Discover
-            </>
-          )}
-        </button>
-      </form>
-
-      <div className="mt-8 pt-8 border-t border-white/5">
-        <p className="text-sm text-gray-400 mb-4">Example queries:</p>
-        <div className="flex flex-wrap gap-3">
-          {exampleQuestions.map((example, index) => (
+        <div className="flex flex-wrap gap-2 mb-4">
+          <span className="text-sm text-gray-600 font-medium">Examples:</span>
+          {EXAMPLE_QUESTIONS.map((example, idx) => (
             <button
-              key={index}
+              key={idx}
+              type="button"
               onClick={() => handleExampleClick(example)}
               disabled={isLoading}
-              className="px-4 py-2.5 text-sm bg-white/5 text-gray-300 rounded-xl hover:bg-white/10 border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="text-sm px-3 py-1 bg-gray-100 hover:bg-cloudera-orange/10 text-gray-700 hover:text-cloudera-orange rounded-lg transition-colors border border-gray-200 hover:border-cloudera-orange disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {example}
             </button>
           ))}
         </div>
+
+        <button
+          type="submit"
+          disabled={!question.trim() || isLoading}
+          className="w-full px-6 py-3 bg-cloudera-orange hover:bg-opacity-90 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+        >
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="animate-spin">⚙️</span>
+              Discovering...
+            </span>
+          ) : (
+            <span>🔍 Discover Hidden Connections</span>
+          )}
+        </button>
+      </form>
+
+      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+        <p className="text-sm text-blue-800">
+          <strong className="font-semibold">How it works:</strong> AI agents query the knowledge graph, 
+          trace pathways across organizational silos, and explain scientific mechanisms using Claude API.
+        </p>
       </div>
     </div>
   )

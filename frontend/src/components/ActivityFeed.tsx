@@ -13,45 +13,54 @@ interface ActivityFeedProps {
 }
 
 export function ActivityFeed({ steps, isActive }: ActivityFeedProps) {
-  if (steps.length === 0 && !isActive) return null
-
   return (
-    <div className="p-8">
-      <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-3">
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold text-gray-800">Discovery Progress</h2>
         {isActive && (
-          <div className="animate-spin rounded-full h-5 w-5 border-2 border-cyan-400 border-t-transparent"></div>
+          <span className="flex items-center gap-2 text-sm text-cloudera-orange font-medium">
+            <span className="animate-pulse">●</span>
+            Active
+          </span>
         )}
-        Agent Activity
-      </h3>
-      
-      <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
-        {steps.map((step, index) => (
-          <div 
-            key={index}
-            className="flex items-start gap-4 animate-fadeIn"
+      </div>
+
+      <div className="space-y-3 max-h-96 overflow-y-auto">
+        {steps.map((step, idx) => (
+          <div
+            key={idx}
+            className="flex gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg animate-fadeIn"
           >
-            <div className="text-gray-500 text-xs mt-1 font-mono w-20 flex-shrink-0">
-              {new Date(step.timestamp).toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-              })}
+            <div className="flex-shrink-0 mt-1">
+              {step.step === 'complete' ? (
+                <span className="text-green-500 text-xl">✓</span>
+              ) : step.step === 'error' ? (
+                <span className="text-red-500 text-xl">✗</span>
+              ) : (
+                <span className="text-cloudera-blue text-xl">⚙️</span>
+              )}
             </div>
-            <div className="flex-1 text-gray-200 text-base">
-              {step.message}
+            <div className="flex-1">
+              <div className="text-sm font-medium text-gray-800 mb-1">{step.step}</div>
+              <div className="text-sm text-gray-600">{step.message}</div>
+              {step.progress > 0 && step.progress < 100 && (
+                <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-cloudera-orange transition-all duration-300"
+                    style={{ width: `${step.progress}%` }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         ))}
       </div>
-      
-      {isActive && (
-        <div className="mt-6">
-          <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden">
-            <div 
-              className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-500 shadow-lg shadow-blue-500/50"
-              style={{ width: `${steps[steps.length - 1]?.progress || 0}%` }}
-            ></div>
-          </div>
+
+      {!isActive && steps.length > 0 && (
+        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-sm text-green-800 font-medium">
+            ✓ Discovery complete
+          </p>
         </div>
       )}
     </div>
