@@ -123,7 +123,7 @@ export function HubAndSpoke({ phase }: HubAndSpokeProps) {
               <div>• Clinical trials</div>
               <div>• Internal R&D</div>
               <div>• DrugBank</div>
-              <div>• Lab notebooks</div>
+              <div>• ELNs</div>
             </div>
           )}
         </div>
@@ -149,7 +149,7 @@ export function HubAndSpoke({ phase }: HubAndSpokeProps) {
       {/* Spoke 2: Data Pipeline (Left) */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2">
         <div className={`
-          w-52 rounded-xl border-2 transition-all duration-500 p-4 bg-white
+          w-62 rounded-xl border-2 transition-all duration-500 p-4 bg-white
           ${phase >= 1
             ? 'border-cloudera-lightblue shadow-lg' 
             : 'border-gray-200'
@@ -164,9 +164,9 @@ export function HubAndSpoke({ phase }: HubAndSpokeProps) {
           </div>
           {phase >= 1 && (
             <div className="space-y-1 text-xs text-gray-600">
-              <div className="text-cloudera-orange font-semibold">✓ Ontology-native → NiFi</div>
-              <div className="text-cloudera-blue font-semibold">✓ Unmapped → CDE → Iceberg</div>
-              <div className="text-cloudera-lightblue font-semibold">✓ NiFi ingests all</div>
+              <div className="text-cloudera-orange font-semibold">✓ Ontology-native → NiFi → Graph</div>
+              <div className="text-cloudera-blue font-semibold">✓ Unmapped → CDE → Iceberg → NiFi → Graph </div>
+              <div className="text-cloudera-lightblue font-semibold">✓ Only NiFi ingests to graph</div>
             </div>
           )}
         </div>

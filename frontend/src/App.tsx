@@ -231,10 +231,10 @@ function App() {
             {/* Footer */}
             <footer className="mt-24 pt-12 border-t border-gray-200 text-center">
               <p className="text-base text-gray-700 mb-2">
-                Powered by <span className="text-cloudera-orange font-semibold">Cloudera Machine Learning</span>
+                Powered by <span className="text-cloudera-orange font-semibold">CLOUDERA</span>
               </p>
               <p className="text-sm text-gray-500">
-                AI Agents • Knowledge Graphs • Claude API
+                Ingestion • Ontologies • Data Engineering • Knowledge Graphs • Grounded AI 
               </p>
             </footer>
           </div>

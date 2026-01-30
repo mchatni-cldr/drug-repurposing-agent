@@ -170,7 +170,7 @@ def score_repurposing_opportunity(
     path_length_penalty = 1.0 / (1 + path['length'] * 0.1)
     
     # Combined score
-    overall_score = (base_score * 0.6) + (approval_bonus * 0.2) + (path_length_penalty * 0.2)
+    overall_score = (base_score * 0.7) + (approval_bonus * 0.3) + (path_length_penalty * 0.2)
     
     return {
         'overall_score': overall_score,

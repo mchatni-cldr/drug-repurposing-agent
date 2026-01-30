@@ -86,7 +86,7 @@ export function PlatformArchitecture() {
       {/* Footer Info */}
       <div className="mt-16 pt-8 border-t border-gray-200 text-center">
         <p className="text-sm text-gray-700 mb-4">
-          <span className="text-cloudera-orange font-semibold">Cloudera</span> propels from vision to reality
+          <span className="text-cloudera-orange font-semibold">CLOUDERA</span> propels from vision to reality
         </p>
         <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-500">
           <span>Cloudera Data Flow (NiFi)</span>

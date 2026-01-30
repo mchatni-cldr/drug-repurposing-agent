@@ -78,7 +78,7 @@ export function DiscoveryQuestion({ onDiscover, isLoading }: DiscoveryQuestionPr
       <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
         <p className="text-sm text-blue-800">
           <strong className="font-semibold">How it works:</strong> AI agents query the knowledge graph, 
-          trace pathways across organizational silos, and explain scientific mechanisms using Claude API.
+          trace pathways across organizational silos, and explain scientific mechanisms.
         </p>
       </div>
     </div>
