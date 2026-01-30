@@ -131,7 +131,7 @@ function App() {
             <button
               onClick={() => setActiveTab('architecture')}
               className={`
-                px-8 py-4 rounded-xl font-semibold transition-all text-base shadow-md
+                w-64 px-8 py-4 rounded-xl font-semibold transition-all text-base shadow-md
                 ${activeTab === 'architecture' 
                   ? 'bg-cloudera-orange text-white shadow-cloudera-orange/30 scale-105' 
                   : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
@@ -144,7 +144,7 @@ function App() {
             <button
               onClick={() => setActiveTab('discovery')}
               className={`
-                px-8 py-4 rounded-xl font-semibold transition-all text-base shadow-md
+                w-64 px-8 py-4 rounded-xl font-semibold transition-all text-base shadow-md
                 ${activeTab === 'discovery' 
                   ? 'bg-cloudera-orange text-white shadow-cloudera-orange/30 scale-105' 
                   : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
