@@ -52,10 +52,10 @@ export function PlatformArchitecture() {
       {/* Title */}
       <header className="text-center mb-12">
         <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-cloudera-orange via-cloudera-blue to-cloudera-navy bg-clip-text text-transparent">
-          Cloudera Platform Architecture
+          Cloudera Platform
         </h1>
         <p className="text-xl text-gray-600">
-          Knowledge Graph as Central Integration Hub
+          Graph as Central Knowledge Hub
         </p>
       </header>
 
