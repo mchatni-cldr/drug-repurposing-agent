@@ -293,7 +293,7 @@ export function HubAndSpoke({ phase }: HubAndSpokeProps) {
             <span className="text-2xl">🤖</span>
             <div>
               <div className="text-sm font-bold text-gray-800">Reasoning Agent</div>
-              <div className="text-xs text-gray-500">Claude API + GPU</div>
+              <div className="text-xs text-gray-500">AI Inferencing</div>
             </div>
           </div>
           {phase >= 3 && (
@@ -302,7 +302,7 @@ export function HubAndSpoke({ phase }: HubAndSpokeProps) {
               <div>• On-demand GNN</div>
               <div>• Graph embeddings</div>
               <div className="text-cloudera-blue font-semibold mt-2">
-                🧠 3 sec discovery
+                🧠 2 min discovery
               </div>
             </div>
           )}
